@@ -1,0 +1,185 @@
+@charset "UTF-8";
+
+@font-face {
+	font-family: "inter";
+	src: url("../fonts/Inter_24pt-ExtraBold.ttf") format('truetype');
+}
+@font-face {
+	font-family: "dongle";
+	src: url('../fonts/Dongle-Regular.ttf');
+}
+
+:root {
+	--black: #333333;
+	--dark-grey: #656670;
+	--grey: #868793;
+	--light-grey: #c1c1c1;
+	--white: #FFFFFF;
+	--red: #a83565;
+	--navy: #1f3658;
+	--kakao: #FAE100;
+
+	--shadow: rgba(34, 36, 38, 0.15);
+	--overlay: rgba(0, 0, 0, 0.5);
+}
+
+/* 공통 */
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	/* min-width: 768px; */
+	font-family: "inter", sans-serif;
+	background-color: var(--white);
+	color: var(--grey);
+}
+
+a {
+	text-decoration: none;
+	color: var(--navy);
+}
+
+h1, h2, h3, h4, h5, h6, p, ul {
+	padding: 0;
+	margin: 0;
+}
+
+li {
+	list-style: none;
+}
+
+li svg {
+	margin: 0;
+}
+button {
+	border: none;
+	background-color: var(--white);
+	border-radius: 10px;
+	padding: 10px 15px;
+}
+
+input {
+	border: none;
+	border-radius: 10px;
+	padding: 7px;
+}
+
+input[type="checkbox"] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--purple);
+	border-radius: 4px;
+	position: relative;
+	cursor: pointer;
+	background-color: var(--white);
+	transition: background-color 0.3s, border-color 0.3s;
+}
+
+input[type="checkbox"]:checked {
+	background-color: var(--purple); /* 보라색 배경 */
+	border-color: var(--purple); /* 테두리 색을 다르게 */
+  }
+
+input[type="checkbox"]:checked::after {
+	content: ''; /* 가상 요소 내용 */
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	width: 8px;
+	height: 8px;
+	background-color: var(--white); /* 체크 표시 색 */
+	clip-path: polygon(0 0, 50% 80%, 100% 20%, 50% 50%); /* 체크 모양 */
+  }
+
+  input:focus {
+	border: none;
+	outline: solid 1px var(--navy);
+  }
+
+textarea {
+	border: 2px solid var(--gray-light);
+	/* 기본 테두리 색 */
+	border-radius: 10px;
+	padding: 7px;
+	width: 100%;
+	font-size: 0.9rem;
+	resize: vertical;
+	resize: none;
+	font-family: "noto-sans", sans-serif;
+	box-sizing: border-box;
+	transition: border-color 0.3s, box-shadow 0.3s;
+	overflow-y: scroll;
+}
+
+/* textarea가 포커스 되었을 때 */
+textarea:focus {
+	border-color: var(--purple);
+	box-shadow: 0 0 5px var(--purple);
+}
+
+select {
+	font-size: 16px;
+	padding: 7px;
+	border: 1px solid var(--white);
+	border-radius: 10px;
+	transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+select:focus {
+	border-color: var(--purple);
+	outline: none;
+}
+
+select::-ms-expand {
+	display: none;
+	/* IE에서 드롭다운 화살표 제거 */
+}
+
+option {
+	padding: 10px;
+	background-color: var(--white);
+	color: var(--grey);
+	border-radius: 10px;
+}
+
+option:hover {
+	background-color: var(--light-grey);
+}
+
+/* modal */
+#modal-overlay {
+	position: absolute;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(5px);
+	font-size: clamp(50%, 1rem, 100%);
+	z-index: 1000;
+}
+
+#modal {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 5vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	background-color: var(--white);
+	border-radius: 10px;
+	box-shadow: 0 2px 3px 0 var(--shadow);
+}
+
+#modal-content {
+	display: flex;
+	flex-direction: column;
+}
