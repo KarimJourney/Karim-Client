@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: "/kakaojoin",
+      name: "kakaojoin",
+      component: () => import("@/components/member/KakaoJoin.vue"),
+    },
+    {
       path: "/password",
       name: "findpwd",
       component: () => import("@/components/member/FindPwd.vue"),
