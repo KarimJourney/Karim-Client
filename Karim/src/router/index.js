@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: "/plan/:id",
       name: "place",
-      component: () => import("@/views/PlanView.vue"),
+      component: () => import("@/views/TripView.vue"),
     },
     {
       path: "/board",

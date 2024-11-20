@@ -2,8 +2,9 @@
 
 @font-face {
 	font-family: "inter";
-	src: url("../fonts/Inter_24pt-ExtraBold.ttf") format('truetype');
+	src: url("../fonts/Inter-VariableFont_opsz\,wght.ttf") format('truetype');
 }
+
 @font-face {
 	font-family: "dongle";
 	src: url('../fonts/Dongle-Regular.ttf');
@@ -40,7 +41,14 @@ a {
 	color: var(--navy);
 }
 
-h1, h2, h3, h4, h5, h6, p, ul {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul {
 	padding: 0;
 	margin: 0;
 }
@@ -52,6 +60,7 @@ li {
 li svg {
 	margin: 0;
 }
+
 button {
 	border: none;
 	background-color: var(--white);
@@ -63,6 +72,17 @@ input {
 	border: none;
 	border-radius: 10px;
 	padding: 7px;
+	width: 100%;
+	color: var(--dark-grey);
+}
+
+input * {
+	font-family: "inter", sans-serif;
+}
+
+input:valid {
+	font-family: "inter", sans-serif;
+
 }
 
 input[type="checkbox"] {
@@ -80,25 +100,98 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-	background-color: var(--purple); /* 보라색 배경 */
-	border-color: var(--purple); /* 테두리 색을 다르게 */
-  }
+	background-color: var(--purple);
+	/* 보라색 배경 */
+	border-color: var(--purple);
+	/* 테두리 색을 다르게 */
+}
 
 input[type="checkbox"]:checked::after {
-	content: ''; /* 가상 요소 내용 */
+	content: '';
+	/* 가상 요소 내용 */
 	position: absolute;
 	top: 4px;
 	left: 4px;
 	width: 8px;
 	height: 8px;
-	background-color: var(--white); /* 체크 표시 색 */
-	clip-path: polygon(0 0, 50% 80%, 100% 20%, 50% 50%); /* 체크 모양 */
+	background-color: var(--white);
+	/* 체크 표시 색 */
+	clip-path: polygon(0 0, 50% 80%, 100% 20%, 50% 50%);
+	/* 체크 모양 */
+}
+
+input[type="date"] {
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	width: 100%;
+	font-family: "inter", sans-serif;
+	position: relative;
+	z-index: 1;
+	color: transparent;
+	background-color: transparent;
+}
+input[type="date"]:focus {
+	color: var(--dark-grey);
+  }
+  
+  input[type="date"]:focus::before,
+  input[type="date"]:valid::before {
+	display: none;
+  }
+  
+  input[type="date"]::before {
+	content: attr(placeholder);
+	position: absolute;
+	left: 40px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--grey);
+	font-family: "inter", sans-serif;
+	font-size: 16px;
+	pointer-events: none;
+	z-index: -1;
+  }
+  
+  input[type="date"]:focus::before,
+  input[type="date"]:valid::before {
+	display: none;
+  }
+  
+  input[type="date"]:valid {
+	color: var(--dark-grey);
+  }
+  
+  input[type="date"]:valid::-webkit-datetime-edit-text {
+	display: inline-block;
+  }
+  
+  input[type="date"]:valid::-webkit-datetime-edit-month-field {
+	display: inline-block;
+  }
+  
+  input[type="date"]:valid::-webkit-datetime-edit-day-field {
+	display: inline-block;
+  }
+  
+  input[type="date"]:valid::-webkit-datetime-edit-year-field {
+	display: inline-block;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	color: transparent;
   }
 
-  input:focus {
+input:focus {
 	border: none;
 	outline: solid 1px var(--navy);
-  }
+}
 
 textarea {
 	border: 2px solid var(--gray-light);

@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "@/utils/axios"; // axios 임포트
+import axios from "@/utils/axios";
 import { useLoginStore } from "@/stores/login";
-import PlanEditModal from "@/components/plan/PlanEditModal.vue";
+import TripEditModal from "@/components/trip/TripEditModal.vue";
 
 const showModal = ref(false);
 const app_key = import.meta.env.VITE_MAPYOUR_API_KEY;
@@ -13,7 +13,6 @@ const route = useRoute();
 const router = useRouter();
 const plan = ref({}); // 현재 여행 계획
 const places = ref([]); // 해당 여행 계획에 속한 장소들
-const mapContainer = ref(null); // 카카오맵을 렌더링할 컨테이너
 const isEditing = ref(false); // 수정 모드 여부
 
 // 여행 계획 ID를 받아와서 해당 여행 계획에 해당하는 장소를 불러오기
@@ -33,9 +32,6 @@ onMounted(async () => {
 
 let map = null;
 let markers = [];
-
-// 기본 이미지 경로 설정
-const defaultImagePath = ref("@/assets/img/default__background.svg");
 
 // 맵 초기화 함수
 const initializeMap = () => {
@@ -175,9 +171,9 @@ const editPlan = async (plan) => {
     <aside>
       <div class="items">
         <h2>{{ plan.name }}&nbsp;&nbsp;<span @click="showModal = true">
-          여행 편집
+          편집
         </span></h2>
-        <h4>{{ plan.startDate }} ~ {{ plan.endDate }}</h4>
+        <h4>{{ plan.startDate }} - {{ plan.endDate }}</h4>
 
         <ul>
           <li
@@ -185,7 +181,6 @@ const editPlan = async (plan) => {
             :key="place.name"
             class="place-item"
           >
-            <!-- <span>{{ index + 1 }}. {{ place.name }}</span> -->
             <img
               :src="
                 place.img1
@@ -226,10 +221,10 @@ const editPlan = async (plan) => {
       <div id="map"></div>
     </div>
 
-    <PlanEditModal
+    <TripEditModal
       v-if="showModal"
       :showModal="showModal"
-      :plan="plan"
+      :trip="plan"
       @close="showModal = false"
       @editPlan="editPlan"
     />
@@ -241,6 +236,10 @@ h2, h4 {
   margin: 0;
 }
 
+h2 {
+  color: var(--dark-grey);
+}
+
 h2 span {
   font-size: 11px;
   text-decoration: underline;
@@ -250,7 +249,7 @@ h2 span {
 section {
   display: flex;
   justify-content: space-between;
-  height: 75vh;
+  height: calc(100vh - 85px);
 }
 
 aside {
