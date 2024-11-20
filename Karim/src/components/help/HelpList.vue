@@ -18,13 +18,13 @@ onMounted(async () => {
 });
 
 const detail = (postId) => {
-  router.push({ name: "detail", params: { id: postId } }); // 여행 계획 ID를 URL 파라미터로 전달
+  router.push({ name: "helpdetail", params: { id: postId } }); // 여행 계획 ID를 URL 파라미터로 전달
 };
 </script>
 
 <template>
   <div>
-    <h2>커뮤니티</h2>
+    <h2>Q & A 게시판</h2>
     <ul>
       <li v-for="(post, index) in posts" :key="index">
         <a @click="detail(post.id)">
@@ -35,7 +35,7 @@ const detail = (postId) => {
     </ul>
     
     <div class="btn">
-      <button @click="router.push({ name: 'new' })">질문하기</button>
+      <button @click="router.push({ name: 'helpnew' })">질문하기</button>
     </div>
   </div>
 </template>
