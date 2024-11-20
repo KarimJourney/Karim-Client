@@ -4,7 +4,6 @@ import { useRouter } from "vue-router"; // vue-router 임포트
 import axios from "@/utils/axios"; // axios 임포트
 
 const router = useRouter(); // 라우터 인스턴스
-
 const code = ref(""); // code 상태 관리
 
 const getToken = async () => {
@@ -13,8 +12,9 @@ const getToken = async () => {
       `http://localhost:8080/member/kakaologin/${code.value}`
     );
     console.log(response);
+
     // message가 "로그인"인지 확인
-    if (response.data.message === "로그인") {
+    if (response.data.message === "로그인" || response.data.message === "회원가입") {
       // 각 데이터를 추출
       const accessToken = response.data.accessToken;
       const memberId = response.data.member.id;
@@ -26,15 +26,15 @@ const getToken = async () => {
       console.log("Nickname:", nickname);
       console.log("Refresh Token:", refreshToken);
 
-      // HomeView로 데이터 넘기기
+      // HomeView로 데이터 넘기기 (state 사용)
       router.push({
         name: "home", // HomeView 라우트 이름
-        query: { 
+        state: { // 데이터를 안전하게 전달
           accessToken,
           memberId,
           nickname,
-          refreshToken
-        }
+          refreshToken,
+        },
       });
     }
   } catch (error) {

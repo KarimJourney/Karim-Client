@@ -102,7 +102,7 @@ const emit = defineEmits("close");
         <div class="items">
           <div class="item">
             <label for="userid">아이디</label>
-            <input id="userid" name="userid" class="field" type="text"v-model="params.userId"
+            <input id="userid" name="userid" class="field" type="text" v-model="params.userId"
               required />
             <span v-if="resultMessage" class="result-message">
               {{ resultMessage }}
