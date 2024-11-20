@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import planSelectList from "@/components/items/planSelectList.vue";
 import { useLoginStore } from "@/stores/login";
-import { useMapStore } from "@/stores/mapStore";
 import axios from "@/utils/axios";
 
 const props = defineProps({
