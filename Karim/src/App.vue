@@ -13,6 +13,6 @@ import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue";
 <style scoped>
 #container {
   margin: 0;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 85px);
 }
 </style>

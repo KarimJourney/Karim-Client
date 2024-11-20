@@ -164,6 +164,8 @@ h2 {
 
 .social-login hr {
   margin-top: 30px;
+  height: 1px;
+  color: var(--light-grey);
 }
 
 .social-login p {

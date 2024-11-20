@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import PlanModal from "@/components/plan/PlanModal.vue"; // 여행 계획을 추가하는 모달 컴포넌트
+import PlanModal from "@/components/trip/TripModal.vue"; // 여행 계획을 추가하는 모달 컴포넌트
 import { useRouter } from "vue-router";
 import axios from "@/utils/axios"; // axios 임포트
 import { useLoginStore } from "@/stores/login";

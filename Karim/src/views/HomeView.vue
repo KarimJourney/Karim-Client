@@ -11,11 +11,8 @@ const slides = [
   { id: 3, image: new URL('../assets/img/main-carousel/main3.webp', import.meta.url).href }
 ];
 
-// 현재 슬라이드 인덱스
-const currentIndex = ref(0);
-
-// 자동 슬라이드 전환 간격 설정 (3초)
-const slideInterval = 3000;
+const currentIndex = ref(0); // 현재 슬라이드 인덱스
+const slideInterval = 3000; // 자동 슬라이드 전환 간격 설정 (3초)
 let slideTimer = null;
 
 // 다음 슬라이드로 이동
@@ -91,7 +88,7 @@ main {
 
 .carousel-image {
   width: 100%;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 85px);
   object-fit: cover;
 }
 

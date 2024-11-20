@@ -184,7 +184,7 @@ li svg {
 }
 
 .dropdown li {
-  padding: 10px;
+  padding: 13px;
 }
 
 @media screen and (max-width: 600px) {
