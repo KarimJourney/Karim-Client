@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import axios from "@/utils/axios";
 import { useLoginStore } from "@/stores/login";
 import { defineComponent } from 'vue';
+import PlaceAddModal from "@/components/trip/PlaceAddModal.vue";
 
 defineComponent({
   name: 'LineMdSunnyFilledLoop',
@@ -24,11 +25,13 @@ defineComponent({
 });
 
 const showModal = ref(false);
-const app_key = import.meta.env.VITE_MAPYOUR_API_KEY;
+const app_key = import.meta.env.VITE_KAKAOMAP_API_KEY;
 const loginStore = useLoginStore();
 
 const route = useRoute();
 const router = useRouter();
+
+const emit = defineEmits("close");
 
 let ps = null;
 let map = null;
@@ -347,9 +350,9 @@ watch(
         <ul>
           <template v-if="places.length">
             <li v-for="place in places">
-            <div class="title">{{ place.name }}</div>
+            <div class="name" @click="getPlace(place)">{{ place.name }}</div>
             <div class="address">{{ place.address }}</div>
-            <button>추가</button>
+            <button @click="showModal = true">추가</button>
           </li>
           </template>
           <template v-else>
@@ -362,6 +365,8 @@ watch(
       <div id="map"></div>
     </div>
   </section>
+
+  <PlaceAddModal v-show="showModal" @close="showModal = false" />
 </template>
 
 <style scoped>
@@ -541,7 +546,7 @@ hr {
   border: none;
 }
 
-.result .title {
+.result .name {
   color: var(--black);
   font-size: 1em;
   width: 75%;
