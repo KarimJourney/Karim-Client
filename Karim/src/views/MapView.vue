@@ -350,7 +350,7 @@ watch(
         <ul>
           <template v-if="places.length">
             <li v-for="place in places">
-            <div class="title" @click="getPlace(place)">{{ place.name }}</div>
+            <div class="name" @click="getPlace(place)">{{ place.name }}</div>
             <div class="address">{{ place.address }}</div>
             <button @click="showModal = true">추가</button>
           </li>
@@ -546,7 +546,7 @@ hr {
   border: none;
 }
 
-.result .title {
+.result .name {
   color: var(--black);
   font-size: 1em;
   width: 75%;
