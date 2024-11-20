@@ -51,20 +51,10 @@ const login = async () => {
 };
 
 const kakaoLogin = async () => {
-  try {
-    const client_id= import.meta.env.VITE_CLIENT_ID;
-    const redirect_uri = import.meta.env.VITE_REDIRECT_URI;
-    const response = await axios.get(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}`);
-    if (response.data.message === '로그인') {
-      router.push({name:'home'});
-    } else if (response.data.message === '회원가입') {
-      // router.push({name:'register'});
-      console.log("회원가입이 필요합니다");
-    }
-  } catch (error) {
-    errorMessage.value = "*카카오 로그인에 실패했습니다.";
-    console.error(error);
-  }
+        const redirect_uri = 'http://localhost:5000/kakaojoin';
+        const clientId = 'd17b0033cb70911bafbf1e73582a328d';
+        const Auth_url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}`;
+        window.location.href = Auth_url;
 }
 </script>
 
