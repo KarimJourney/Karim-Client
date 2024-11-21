@@ -24,7 +24,6 @@ onMounted(async () => {
   const planId = route.params.id;
   try {
     const response = await axios.get(`/plan/detail/${userId}/${planId}`);
-    console.log(response.data.places);
     plan.value = response.data.plan;
     places.value = response.data.places;
     placeLists.value = places.value.reduce((acc, curr) => {
@@ -119,37 +118,32 @@ watch(
 // 장소 순서 변경
 const movePlaceUp = (index, date) => {
   if (index > 0) {
-    var temp = places.value[index].order;
-    places.value[index].order = places.value[index - 1].order;
-    places.value[index - 1].order = temp;
-    temp = placeLists.value[date][index];
+    var temp = placeLists.value[date][index];
     placeLists.value[date].splice(index, 1);
     placeLists.value[date].splice(index - 1, 0, temp);
   }
-  // const globalIndex = places.value.findIndex((place) => place.id === placeLists.value[date][index].id);
-  // if (globalIndex > 0) {
-  //   movePlaceUp(globalIndex);
-  // }
 };
 
 const movePlaceDown = (index, date) => {
   if (index < places.value.length - 1) {
-    var temp = places.value[index].order;
-    places.value[index].order = places.value[index + 1].order;
-    places.value[index + 1].order = temp;
-    temp = placeLists.value[date][index];
+    var temp = placeLists.value[date][index];
     placeLists.value[date].splice(index, 1);
     placeLists.value[date].splice(index + 1, 0, temp);
   }
-  // const globalIndex = places.value.findIndex((place) => place.id === placeLists.value[date][index].id);
-  // if (globalIndex < places.value.length - 1) {
-  //   movePlaceDown(globalIndex);
-  // }
 };
 
-// 수정 완료 후 서버에 순서 업데이트 요청
-const updatePlaceOrder = async () => {
+const updatePlace = async () => {
   try {
+    console.log(places.value);
+    const keys = Object.keys(placeLists.value);
+    places.value = [];
+    for (var i = 0; i < keys.length; i++) {
+      const keys2 = Object.keys(placeLists.value[keys[i]]);
+      for (var j = 0; j < keys2.length; j++) {
+        places.value.push(placeLists.value[keys[i]][keys2[j]]);
+      }
+      console.log(places.value);
+    }
     const response = await axios.put(`/plan/detail/${route.params.id}`, {data: places.value});
     isEditing.value = false;
   } catch (error) {
@@ -159,12 +153,14 @@ const updatePlaceOrder = async () => {
 
 // 장소 삭제
 const deletePlace = async (place, index) => {
-  try {
-    const response = await axios.delete(`/plan/detail/${route.params.id}/${place.id}`);
-    console.log(`${place.id} 삭제가 완료되었습니다.`);
-    router.go(0);
-  } catch (error) {
-    console.error("장소 삭제 실패:", error);
+  if (confirm('삭제하시겠습니까?')) {
+      try {
+      const response = await axios.delete(`/plan/detail/${route.params.id}/${place.id}`);
+      console.log(`${place.id} 삭제가 완료되었습니다.`);
+      router.go(0);
+    } catch (error) {
+      console.error("장소 삭제 실패:", error);
+    }
   }
 };
 
@@ -184,30 +180,48 @@ const editPlan = async (plan) => {
     <aside>
       <span id="close" @click="router.push({ name: 'mypage' })">X</span>
       <div class="items">
-        <h2>{{ plan.name }}&nbsp;&nbsp;<span @click="showModal = true">
-          편집
-        </span></h2>
-        <h4>{{ plan.startDate }} - {{ plan.endDate }}</h4>
+        <div id="info">
+          <h2>{{ plan.name }}&nbsp;<span @click="showModal = true">
+            편집
+          </span></h2>
+          <h4>{{ plan.startDate }} - {{ plan.endDate }}<span v-if="plan.cost">, \ {{ plan.cost }}</span></h4>
+          <h5 class="content">{{ plan.content }}</h5>
+        </div>
         <div id="edit">
           <span v-show="!isEditing" @click="isEditing = true">수정</span>
-          <span v-show="isEditing" @click="updatePlaceOrder">완료</span>
+          <span v-show="isEditing" @click="updatePlace">완료</span>
         </div>
         <div class="place">
           <template v-for="(place, date) in placeLists">
-          <h5>{{ date }}</h5>
-          <ul>
-            <li v-for="(p, index) in place">
-              <div class="place-item-content" @click="getPlace(p)">
-                <h6>{{ p.planDate }}</h6>
-                <h6>{{ p.name }}</h6>
-                <div class="btn" v-if="isEditing">
-                  <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
-                  <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
-                  <button @click="deletePlace(p, index)">삭제</button>
+          <div>
+            <h3>{{ date }}</h3>
+            <ul>
+              <li v-for="(p, index) in place">
+                <div class="place-item" @click="getPlace(p)">
+                  <h5>{{ index + 1 }}</h5>
+                  <h4>{{ p.name }}</h4>
+                  <template v-if="!isEditing">
+                    <h6 v-if="p.cost">{{ p.cost }}</h6>
+                    <h5 v-if="p.content">{{ p.content }}</h5>
+                  </template>
+                  <template v-else>
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+              viewBox="0 0 576 512">
+              <path fill="currentColor"
+                d="M564 192c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-48l18.6-80.6c1.7-7.5-4-14.7-11.7-14.7h-46.1c-5.7 0-10.6 4-11.7 9.5L450.7 128H340.8l-19.7-86c-1.3-5.5-6.1-9.3-11.7-9.3h-44c-5.6 0-10.4 3.8-11.7 9.3l-20 86H125l-17.5-85.7c-1.1-5.6-6.1-9.6-11.8-9.6H53.6c-7.7 0-13.4 7.1-11.7 14.6L60 128H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h62.3l7.2 32H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h83.9l40.9 182.6c1.2 5.5 6.1 9.4 11.7 9.4h56.8c5.6 0 10.4-3.9 11.7-9.3L259.3 288h55.1l42.4 182.7c1.3 5.4 6.1 9.3 11.7 9.3h56.8c5.6 0 10.4-3.9 11.7-9.3L479.1 288H564c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-70.1l7.4-32zM183.8 342c-6.2 25.8-6.8 47.2-7.3 47.2h-1.1s-1.7-22-6.8-47.2l-11-54h38.8zm27.5-118h-66.8l-6.5-32h80.8zm62.9 0l2-8.6c1.9-8 3.5-16 4.8-23.4h11.8c1.3 7.4 2.9 15.4 4.8 23.4l2 8.6zm130.9 118c-5.1 25.2-6.8 47.2-6.8 47.2h-1.1c-.6 0-1.1-21.4-7.3-47.2l-12.4-54h39.1zm25.2-118h-67.4l-7.3-32h81.6z" />
+            </svg></span>
+            <input class="input-cost" type="number" v-model="placeLists[date][index].cost" placeholder="비용 입력">
+                    <textarea rows="5" v-model="placeLists[date][index].content" style="overflow: hidden;" placeholder="이곳은 어땠나요? 자유롭게 이야기해주세요!"></textarea>
+                  </template>
+                  <div class="btn" v-if="isEditing">
+                    <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
+                    <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
+                    <button @click="deletePlace(p, index)">삭제</button>
+                  </div>
                 </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </template>
         </div>
       </div>
@@ -245,24 +259,38 @@ aside {
   padding: 10px 25px;
 }
 
+#info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 h2, h4 {
   margin: 0;
 }
 
 h2 {
-  color: var(--dark-grey);
+  color: var(--black);
 }
 
 h2 span {
   font-size: 0.5em;
   text-decoration: underline;
-  color: var(--light-gray);
+  color: var(--light-grey);
   font-weight: 100;
 }
 
 aside {
   position: relative;
+}
+
+.content {
+  font-size: 1.1em;
+}
+
+h4 span {
+  color: var(--light-grey);
 }
 
 #edit {
@@ -294,24 +322,46 @@ aside {
   overflow-y: auto;
 }
 
-h5 {
-  font-size: 1.1em;
+.place div{ 
+  border-bottom: solid 1px var(--light-grey);
+
 }
+.place div:last-child {
+  border: none;
+}
+
+.place .place-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 1px;
+}
+
+.place h3 {
+  color: var(--dark-grey);
+  padding-top: 10px;
+}
+
+.place-item .icon {
+  position: absolute;
+  transform: translateY(269%);
+}
+
+.input-cost {
+  width: calc(100% - 40px);
+  padding: 7px 20px;
+}
+
 
 ul {
   width: 100%;
-  
 }
 
 li {
-  border-bottom: solid 1px var(--light-grey);
   padding: 15px 0;
   position: relative;
   word-break: keep-all;
-}
-
-li:last-child {
-  border: none;
 }
 
 li .name {

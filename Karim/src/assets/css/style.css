@@ -30,7 +30,6 @@ body {
 	margin: 0;
 	padding: 0;
 	height: 100%;
-	/* min-width: 768px; */
 	font-family: "inter", sans-serif;
 	background-color: var(--white);
 	color: var(--grey);
@@ -194,24 +193,18 @@ input:focus {
 }
 
 textarea {
-	border: 2px solid var(--gray-light);
-	/* 기본 테두리 색 */
+	border: 1px solid var(--light-grey);
 	border-radius: 10px;
-	padding: 7px;
 	width: 100%;
 	font-size: 0.9rem;
-	resize: vertical;
 	resize: none;
-	font-family: "noto-sans", sans-serif;
+	font-family: 'inter', sans-serif;
 	box-sizing: border-box;
-	transition: border-color 0.3s, box-shadow 0.3s;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
-/* textarea가 포커스 되었을 때 */
 textarea:focus {
-	border-color: var(--purple);
-	box-shadow: 0 0 5px var(--purple);
+	outline: solid 1px var(--navy);
 }
 
 select {
