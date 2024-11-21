@@ -2,9 +2,7 @@
 import { ref } from "vue";
 
 const kakaoLogin = async () => {
-  const redirect_uri = 'http://localhost:5000/kakaojoin';
-  const clientId = 'd17b0033cb70911bafbf1e73582a328d';
-  const Auth_url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}`;
+  const Auth_url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${import.meta.env.VITE_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}`;
   window.location.href = Auth_url;
 };
 </script>

@@ -2,17 +2,39 @@
   <div class="chatbot-container" :class="{ minimized: isMinimized }">
     <div v-if="!isMinimized" class="chatbot">
       <div class="chatbot-header">
-        <span>여행 챗봇</span>
-        <button class="close-btn" @click="toggleMinimize">-</button>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1.5em"
+          height="1.5em"
+          viewBox="0 0 24 24"
+          class="back-icon"
+          @click="toggleMinimize"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 18l-6-6l6-6"
+          />
+        </svg>
+        <div class="header-content">
+          <div class="title-container">
+            <span class="header-title">AI 카림이</span>
+            <div class="status-indicator"></div>
+          </div>
+          <span class="header-subtitle">여행 관련해서 궁금한 사항이 있다면 물어보세요!</span>
+        </div>
       </div>
       <div class="chatbot-body">
         <div class="messages">
           <div
             v-for="(message, index) in messages"
             :key="index"
-            :class="message.sender"
+            :class="['message', message.sender]"
           >
-            {{ message.text }}
+            <p class="message-text">{{ message.text }}</p>
           </div>
         </div>
         <div class="input-container">
@@ -57,7 +79,7 @@ export default {
       messages: [
         {
           sender: "bot",
-          text: "안녕하세요! 저는 여행 챗봇입니다. 여행지 추천, 맛집, 숙소 정보 등을 알려드릴게요. 무엇을 도와드릴까요?",
+          text: "안녕하세요! 저는 AI 카림입니다. 여행지 추천, 맛집, 숙소 정보 등을 알려드릴게요. 무엇을 도와드릴까요?",
         },
       ],
     };
@@ -119,12 +141,13 @@ export default {
 
 .chatbot {
   width: 350px;
-  height: 450px;
+  max-height: 500px;
   background-color: var(--white);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .chatbot-header {
@@ -132,11 +155,48 @@ export default {
   color: var(--white);
   padding: 10px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+}
+
+.back-icon {
+  cursor: pointer;
+}
+
+.header-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 10px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center; /* 텍스트와 초록 점 수평 정렬 */
+}
+
+.header-title {
+  font-size: 16px;
   font-weight: bold;
+  text-align: left;
+}
+
+.status-indicator {
+  width: 5px;
+  height: 5px;
+  background-color: #00ff00;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: var(--light-gray);
+  opacity: 0.7;
+  text-align: left;
+  margin-top: 5px;
 }
 
 .chatbot-body {
@@ -153,47 +213,58 @@ export default {
   margin-bottom: 10px;
 }
 
-.user {
-  text-align: right;
-  margin: 5px;
-  padding: 5px;
-  background-color: #e1f5fe;
-  border-radius: 5px;
+.message {
+  display: inline-block;
+  margin: 5px 0;
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 75%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
-.bot {
-  text-align: left;
-  margin: 5px;
-  padding: 5px;
+.message.user {
+  align-self: flex-end;
+  float: right;
+  background-color: #e1f5fe;
+  color: #000;
+}
+
+.message.bot {
+  align-self: flex-start;
   background-color: #f1f1f1;
-  border-radius: 5px;
+  color: #333;
 }
 
 .input-container {
   display: flex;
-  gap: 5px;
+  gap: 10px;
+  align-items: center;
 }
 
 input {
   flex: 1;
-  padding: 10px;
+  font-size: 14px;
+  padding: 13px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
 button {
-  padding: 10px;
+  font-size: 14px;
+  padding: 13px 15px;
   background-color: var(--navy);
   color: var(--white);
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .chatbot-icon {
-  width: 45px;
-  height: 45px;
-  padding: 10px;
+  width: 60px;
+  height: 60px;
+  padding: 5px;
   background-color: white;
   color: var(--navy);
   display: flex;
@@ -201,7 +272,7 @@ button {
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 28px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
