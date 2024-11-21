@@ -36,6 +36,10 @@
           >
             <p class="message-text">{{ message.text }}</p>
           </div>
+          <!-- 로딩 애니메이션 -->
+          <div v-if="isLoading" class="loading">
+            <div class="spinner"></div>
+          </div>
         </div>
         <div class="input-container">
           <input
@@ -82,6 +86,7 @@ export default {
           text: "안녕하세요! 저는 AI 카림입니다. 여행지 추천, 맛집, 숙소 정보 등을 알려드릴게요. 무엇을 도와드릴까요?",
         },
       ],
+      isLoading: false, // 로딩 상태 추가
     };
   },
   methods: {
@@ -94,6 +99,7 @@ export default {
       const userMessage = this.userInput;
       this.messages.push({ sender: "user", text: userMessage });
       this.userInput = "";
+      this.isLoading = true; // 로딩 시작
 
       try {
         const response = await axios.post(
@@ -125,6 +131,8 @@ export default {
           sender: "bot",
           text: "오류가 발생했습니다. 다시 시도해주세요.",
         });
+      } finally {
+        this.isLoading = false; // 로딩 종료
       }
     },
   },
@@ -283,11 +291,36 @@ button {
 }
 
 .back-icon {
-  opacity: 0.7; /* 70% 투명도 */
-  transition: opacity 0.3s ease; /* 부드러운 전환 */
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
 .back-icon:hover {
-  opacity: 1; /* 호버 시 100% 불투명 */
+  opacity: 1;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--navy);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
