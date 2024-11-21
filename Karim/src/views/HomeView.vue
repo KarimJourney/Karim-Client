@@ -7,8 +7,8 @@ const router = useRouter();
 // 슬라이드 데이터 (이미지 링크 또는 콘텐츠)
 const slides = [
   { id: 1, image: new URL('../assets/img/main-carousel/main.png', import.meta.url).href },
-  { id: 2, image: new URL('../assets/img/main-carousel/main1.jpg', import.meta.url).href },
-  { id: 3, image: new URL('../assets/img/main-carousel/main3.webp', import.meta.url).href }
+  { id: 2, image: new URL('../assets/img/main-carousel/main2.jpg', import.meta.url).href },
+  { id: 3, image: new URL('../assets/img/main-carousel/main3.jpg', import.meta.url).href }
 ];
 
 const currentIndex = ref(0); // 현재 슬라이드 인덱스
