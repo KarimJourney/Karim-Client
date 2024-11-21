@@ -120,11 +120,12 @@ main {
 
 h2 {
   font-weight: 400;
-  font-size: 38px;
+  font-size: 3vw;
   line-height: 1.6em;
 }
 
 h6 {
+  font-size: 2.5vw;
   line-height: 1.6em;
   cursor: pointer;
 }
