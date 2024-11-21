@@ -1,17 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "@/utils/axios"; // axios 임포트
+import axios from "@/utils/axios";
 
-// QnA 데이터를 관리하는 상태
 const qnaList = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref("");
 
-// 서버에서 QnA 데이터를 가져오는 함수
 const fetchQnAList = async () => {
   try {
     const response = await axios.get("/help");
-    qnaList.value = response.data; // 서버에서 가져온 데이터
+    qnaList.value = response.data;
   } catch (error) {
     console.error("QnA 데이터를 가져오는 데 실패했습니다.", error);
     errorMessage.value = "데이터를 가져오는 중 오류가 발생했습니다.";
@@ -20,7 +18,6 @@ const fetchQnAList = async () => {
   }
 };
 
-// 컴포넌트가 마운트되었을 때 QnA 데이터를 가져옵니다.
 onMounted(() => {
   fetchQnAList();
 });
@@ -102,24 +99,33 @@ onMounted(() => {
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .qna-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--navy);
+  color: white;
 }
 
 .qna-content h3 {
   font-size: 18px;
   font-weight: bold;
   color: #1f2937;
+  transition: color 0.3s ease;
 }
 
 .qna-content p {
   font-size: 14px;
   color: #6b7280;
   margin-top: 10px;
+  transition: color 0.3s ease;
+}
+
+.qna-item:hover .qna-content h3,
+.qna-item:hover .qna-content p {
+  color: white;
 }
 
 .no-answer {
