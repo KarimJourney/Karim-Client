@@ -30,17 +30,6 @@ onMounted(async () => {
   }
 });
 
-// 여행 계획 추가
-const addPlan = async (plan) => {
-  try {
-    const response = await axios.post("/plan/new", plan); // 여행 계획 추가
-    showModal.value = false; // 모달 닫기
-    router.go(0);
-  } catch (error) {
-    console.error("여행 계획을 추가하는 데 실패했습니다.", error);
-  }
-};
-
 // 여행 계획 상세 페이지로 이동
 const goToPlaceList = (planId) => {
   router.push({ name: "place", params: { id: planId } }); // 여행 계획 ID를 URL 파라미터로 전달
@@ -92,8 +81,7 @@ const goToPlaceList = (planId) => {
     <PlanModal
       v-if="showModal"
       :showModal="showModal"
-      @close="showModal = false"
-      @addPlan="addPlan"
+      @close="showModal = false; router.go(0);"
     />
   </section>
 </template>
