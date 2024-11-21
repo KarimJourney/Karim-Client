@@ -125,7 +125,6 @@ h2 {
 }
 
 h6 {
-  font-size: 0.4em;
   line-height: 1.6em;
   cursor: pointer;
 }
