@@ -167,7 +167,14 @@ ul {
 
 .nav_left li {
   padding: 17px;
+  color: var(--light-gray); /* 기본 색상 */
+  transition: color 0.3s ease; /* 부드러운 색상 전환 */
 }
+
+.nav_left li:hover {
+  color: var(--navy); /* 호버 시 navy 색상 */
+}
+
 .nav_right ul {
   justify-content: end;
 }
@@ -217,7 +224,6 @@ li svg {
 .dropdown li {
   padding: 13px;
 }
-
 
 .profile-icon {
   position: relative;
