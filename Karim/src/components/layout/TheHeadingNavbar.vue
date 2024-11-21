@@ -43,7 +43,7 @@ const toggleUserMenu = () => {
         <ul>
           <li @click="router.push({ name: 'map' })">여행</li>
           <li @click="router.push({ name: 'board' })">커뮤니티</li>
-          <li @click="router.push({ name: 'help' })">고객센터</li>
+          <li @click="router.push({ name: 'help' })">FAQ</li>
         </ul>
       </div>
       <div class="nav_right">
