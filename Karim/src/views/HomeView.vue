@@ -72,6 +72,7 @@ main {
   position: absolute;
   bottom: 0;
   width: 100%;
+  height: calc(100vh - 85px);
   overflow: hidden;
 }
 
