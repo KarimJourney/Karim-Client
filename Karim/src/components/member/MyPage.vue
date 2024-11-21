@@ -25,15 +25,14 @@ onMounted(() => {
 // 여행 계획 목록을 가져오는 함수
 const fetchData = async () => {
   try {
-    const response = await axios.post(`/user/mypage/${userId}`);
-    member.value = response.data.member;
+    const response = await axios.get(`/member/${userId}`);
   } catch (error) {
     console.error("회원 정보를 가져오는 데 실패했습니다.", error);
   }
   try {
-    const response = await axios.post(`/plan`, { userId: userId });
+    const response = await axios.get(`/plan/${userId}`);
     console.log(response.data.data);
-    plans.value = response.data.data; // 서버에서 받은 여행 계획 목록을 저장
+    plans.value = response.data.data;
   } catch (error) {
     console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
   }
@@ -62,7 +61,7 @@ const goToPlaceList = (planId) => {
       <h2>{{ member.userName }}</h2>
       <h5>@{{ member.userId }}</h5>
       <div class="btn">
-        <template v-if="loginStore.getId === member.userId"
+        <template v-if="loginStore.getId === member.id"
           ><button @click="router.push({ name: 'memberedit' })">
             내 정보 수정
           </button>
