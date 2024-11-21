@@ -83,30 +83,7 @@ const router = createRouter({
     {
       path: "/help",
       name: "help",
-      component: () => import("@/views/BoardView.vue"),
-      redirect: { name: "helplist" },
-      children: [
-        {
-          path: "",
-          name: "help",
-          component: () => import("@/components/board/BoardList.vue"),
-        },
-        {
-          path: "new",
-          name: "helpnew",
-          component: () => import("@/components/board/BoardNew.vue"),
-        },
-        {
-          path: "post/:id",
-          name: "helpdetail",
-          component: () => import("@/components/board/BoardDetail.vue"),
-        },
-        {
-          path: "edit/:id",
-          name: "helpupdate",
-          component: () => import("@/components/board/BoardUpdate.vue"),
-        },
-      ],
+      component: () => import("@/views/HelpView.vue"),
     },
   ],
 });
