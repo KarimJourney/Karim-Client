@@ -1,16 +1,16 @@
-import { ref, computed, onMounted } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
 
 export const useLoginStore = defineStore('login', () => {
   // state
   const isLogin = ref(false);
   const id = ref("");
-  const name = ref("")
+  const name = ref("");
 
   // get
-  const getLogin = computed(() => isLogin.value)
-  const getId = computed(() => id.value)
-  const getName = computed(() => name.value)
+  const getLogin = computed(() => isLogin.value);
+  const getId = computed(() => id.value);
+  const getName = computed(() => name.value);
 
   // set
   const setLogin = (flag, _id, _name) => {
@@ -24,7 +24,7 @@ export const useLoginStore = defineStore('login', () => {
       localStorage.removeItem('id');
       localStorage.removeItem('name');
     }
-  }
+  };
 
   const restoreLoginState = () => {
     const storedUserId = localStorage.getItem('id');
@@ -37,9 +37,8 @@ export const useLoginStore = defineStore('login', () => {
     }
   };
 
-  onMounted(() => {
-    restoreLoginState();
-  });
+  // Pinia store가 생성될 때 로그인 상태 복원
+  restoreLoginState();
 
-  return { isLogin, id, getLogin, getId, getName, setLogin }
-})
+  return { isLogin, id, getLogin, getId, getName, setLogin };
+});

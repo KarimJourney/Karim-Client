@@ -2,9 +2,11 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router"; // vue-router 임포트
 import axios from "@/utils/axios"; // axios 임포트
+import { useLoginStore } from "@/stores/login"; // Pinia 스토어 임포트
 
 const router = useRouter(); // 라우터 인스턴스
 const code = ref(""); // code 상태 관리
+const loginStore = useLoginStore(); // Pinia 스토어 인스턴스
 
 const getToken = async () => {
   try {
@@ -26,15 +28,14 @@ const getToken = async () => {
       console.log("Nickname:", nickname);
       console.log("Refresh Token:", refreshToken);
 
-      // HomeView로 데이터 넘기기 (state 사용)
+      // Pinia 스토어에 로그인 상태 설정
+      loginStore.setLogin(true, memberId, nickname);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      // HomeView로 이동
       router.push({
         name: "home", // HomeView 라우트 이름
-        state: { // 데이터를 안전하게 전달
-          accessToken,
-          memberId,
-          nickname,
-          refreshToken,
-        },
       });
     }
   } catch (error) {
