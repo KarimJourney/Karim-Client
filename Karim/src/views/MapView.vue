@@ -54,7 +54,7 @@ onMounted(async () => {
       }
 
       // 현재 위치를 지도 첫 시작점으로 잡기
-      navigator.geolocation.getCurrentPosition((cur) => {
+      navigator.geolocation.getCurrentPosition(async (cur) => {
         const options = {
           center: new kakao.maps.LatLng(cur.coords.latitude, cur.coords.longitude), // 초기 중심 좌표
           level: 3, // 확대 레벨
@@ -83,6 +83,23 @@ onMounted(async () => {
             address.value = "검색해보세요";
           }
         });
+
+        // 현재 위치의 날씨 표시하기
+        // try {
+        //   let today = new Date();
+        //   const date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate(), time = (today.getHours() - (today.getMinutes() < 10 ? -1 : 0) < 0 ? 23 : today.getHours() - (today.getMinutes() < 10 ? -1 : 0)) + "00";
+        //   const response = await axios.get("/weather", {
+        //     params: {
+        //       date: date,
+        //       time: time,
+        //       nx: cur.coords.latitude,
+        //       ny: cur.coords.longitude
+        //     },
+        //   });
+        //   console.log(response.data);
+        // } catch (error) {
+        //   console.error("Weather API 호출 실패", error);
+        // }
 
         // 카테고리 검색용
         ps = new kakao.maps.services.Places(map);
@@ -240,7 +257,6 @@ watch(
             <div class="temperature">7.4°</div>
             <div class="weather-description">맑음</div>
           </div>
-
         </div>
         <div class="additional-info">
           <p>체감온도 <span>5.7°</span></p>
