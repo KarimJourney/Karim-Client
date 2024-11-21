@@ -15,7 +15,7 @@
             stroke="currentColor"
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="2"
+            stroke-width="1.3"
             d="M15 18l-6-6l6-6"
           />
         </svg>
@@ -50,8 +50,8 @@
     <div v-else class="chatbot-icon" @click="toggleMinimize">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="2em"
-        height="2em"
+        width="1.5em"
+        height="1.5em"
         viewBox="0 0 24 24"
       >
         <path
@@ -280,5 +280,14 @@ button {
 .chatbot-icon:hover {
   background-color: var(--navy);
   color: white;
+}
+
+.back-icon {
+  opacity: 0.7; /* 70% 투명도 */
+  transition: opacity 0.3s ease; /* 부드러운 전환 */
+}
+
+.back-icon:hover {
+  opacity: 1; /* 호버 시 100% 불투명 */
 }
 </style>
