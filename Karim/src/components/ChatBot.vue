@@ -188,7 +188,7 @@ export default {
   height: 5px;
   background-color: #00ff00;
   border-radius: 50%;
-  margin-left: 8px; /* "AI 카림이"와 약간 떨어지게 */
+  margin-left: 8px;
 }
 
 .header-subtitle {
@@ -196,7 +196,7 @@ export default {
   color: var(--light-gray);
   opacity: 0.7;
   text-align: left;
-  margin-top: 5px; /* 간격 조정 */
+  margin-top: 5px;
 }
 
 .chatbot-body {
