@@ -31,11 +31,8 @@ const trips = ref({});
 onMounted(async () => {
   console.log(props.place);
   try {
-    const userId = ref({
-      userId: loginStore.getId,
-    });
-    const response = await axios.post(`/plan`, userId.value);
-    trips.value = response.data.data;
+    const response = await axios.get(`/plan/${loginStore.getId}`);
+    trips.value = response.data;
   } catch (error) {
     console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
   }
@@ -46,11 +43,15 @@ const addPlace = async () => {
   try {
     const data = {
       planId: selectedTrip.value.id,
-      attr_id: 3818, // props.place.id,
+      attrId: props.place.id,
+      name: props.place.name,
+      address: props.place.address,
+      latitude: props.place.latitude,
+      longitude: props.place.longitude,
       planDate: selectedDate.value,
-      order: 0, // 순서는 임시로 0 설정, 필요시 변경 가능
     };
-    await axios.post(`/plan/${selectedTrip.value.id}/new`, data);
+    console.log(data.attrId);
+    await axios.post(`/plan/detail/${selectedTrip.value.id}`, data);
     closeModal(); // 장소 추가 후 모달 닫기
   } catch (error) {
     console.error("장소 추가 중 오류 발생", error);

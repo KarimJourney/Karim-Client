@@ -23,7 +23,7 @@ const router = useRouter();
 // 여행 계획 삭제 처리
 const deletePlan = async () => {
     try {
-      const response = await axios.delete("/plan", {data: {id: props.plan.id, userId: loginStore.getId}}); // 서버에 여행 계획 추가
+      const response = await axios.delete(`/plan/${loginStore.getId}/${props.plan.id}`);
       emit("close");
       router.push({name:'mypage'});
     } catch (error) {

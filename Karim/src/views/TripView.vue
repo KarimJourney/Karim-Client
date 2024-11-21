@@ -16,6 +16,7 @@ let map = null;
 let markers = [];
 const plan = ref({}); 
 const places = ref([]); 
+const placeLists = ref({});
 const isEditing = ref(false);
 
 onMounted(async () => {
@@ -23,10 +24,16 @@ onMounted(async () => {
   const planId = route.params.id;
   try {
     const response = await axios.get(`/plan/detail/${userId}/${planId}`);
-    console.log(response);
+    console.log(response.data.places);
     plan.value = response.data.plan;
-    places.value = response.data.place;
-
+    places.value = response.data.places;
+    placeLists.value = places.value.reduce((acc, curr) => {
+      const { planDate } = curr;
+      if (acc[planDate]) acc[planDate].push(curr);
+      else acc[planDate] = [curr];
+      return acc;
+    }, {});
+    console.log(placeLists.value);
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&autoload=false`;
     script.onload = () => {
@@ -51,6 +58,7 @@ onMounted(async () => {
   } catch (error) {
     console.error("여행 계획과 장소를 가져오는 데 실패했습니다.", error);
   }
+  
 });
 
 
@@ -95,6 +103,11 @@ const addMarkers = () => {
   }
 };
 
+const getPlace = (place) => {
+  const position = new kakao.maps.LatLng(place.latitude, place.longitude);
+  map.setCenter(position);
+}
+
 watch(
   () => places.value, // places 배열이 바뀔 때마다 마커 갱신
   () => {
@@ -104,32 +117,40 @@ watch(
 );
 
 // 장소 순서 변경
-const movePlaceUp = (index) => {
+const movePlaceUp = (index, date) => {
   if (index > 0) {
-    const orderTemp = places.value[index].order;
+    var temp = places.value[index].order;
     places.value[index].order = places.value[index - 1].order;
-    places.value[index - 1].order = orderTemp;
-    const temp = places.value[index];
-    places.value[index] = places.value[index - 1];
-    places.value[index - 1] = temp;
+    places.value[index - 1].order = temp;
+    temp = placeLists.value[date][index];
+    placeLists.value[date].splice(index, 1);
+    placeLists.value[date].splice(index - 1, 0, temp);
   }
+  // const globalIndex = places.value.findIndex((place) => place.id === placeLists.value[date][index].id);
+  // if (globalIndex > 0) {
+  //   movePlaceUp(globalIndex);
+  // }
 };
 
-const movePlaceDown = (index) => {
+const movePlaceDown = (index, date) => {
   if (index < places.value.length - 1) {
-    const orderTemp = places.value[index].order;
+    var temp = places.value[index].order;
     places.value[index].order = places.value[index + 1].order;
-    places.value[index + 1].order = orderTemp;
-    const temp = places.value[index];
-    places.value[index] = places.value[index + 1];
-    places.value[index + 1] = temp;
+    places.value[index + 1].order = temp;
+    temp = placeLists.value[date][index];
+    placeLists.value[date].splice(index, 1);
+    placeLists.value[date].splice(index + 1, 0, temp);
   }
+  // const globalIndex = places.value.findIndex((place) => place.id === placeLists.value[date][index].id);
+  // if (globalIndex < places.value.length - 1) {
+  //   movePlaceDown(globalIndex);
+  // }
 };
 
 // 수정 완료 후 서버에 순서 업데이트 요청
 const updatePlaceOrder = async () => {
   try {
-    const response = await axios.put(`/plan/${route.params.id}`, {data: places.value});
+    const response = await axios.put(`/plan/detail/${route.params.id}`, {data: places.value});
     isEditing.value = false;
   } catch (error) {
     console.error("장소 순서 업데이트 실패:", error);
@@ -139,8 +160,9 @@ const updatePlaceOrder = async () => {
 // 장소 삭제
 const deletePlace = async (place, index) => {
   try {
-    const response = await axios.delete(`/plan/${place.id}`);
+    const response = await axios.delete(`/plan/detail/${route.params.id}/${place.id}`);
     console.log(`${place.id} 삭제가 완료되었습니다.`);
+    router.go(0);
   } catch (error) {
     console.error("장소 삭제 실패:", error);
   }
@@ -171,20 +193,22 @@ const editPlan = async (plan) => {
           <span v-show="isEditing" @click="updatePlaceOrder">완료</span>
         </div>
         <div class="place">
-          <h5>{{ plan.startDate }}</h5>
+          <template v-for="(place, date) in placeLists">
+          <h5>{{ date }}</h5>
           <ul>
-            <li v-for="(place, index) in places">
-              <div class="place-item-content">
-                <h6>{{ place.planDate }}</h6>
-                <h6>{{ place.title }}</h6>
+            <li v-for="(p, index) in place">
+              <div class="place-item-content" @click="getPlace(p)">
+                <h6>{{ p.planDate }}</h6>
+                <h6>{{ p.name }}</h6>
                 <div class="btn" v-if="isEditing">
-                  <button @click="movePlaceUp(index)" :disabled="index === 0">위로</button>
-                  <button @click="movePlaceDown(index)" :disabled="index === places.length - 1">아래로</button>
-                  <button @click="deletePlace(place, index)">삭제</button>
+                  <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
+                  <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
+                  <button @click="deletePlace(p, index)">삭제</button>
                 </div>
               </div>
             </li>
           </ul>
+        </template>
         </div>
       </div>
     </aside>
@@ -266,6 +290,8 @@ aside {
 
 .place {
   width: 90%;
+  height: calc(100vh - 35%);
+  overflow-y: auto;
 }
 
 h5 {
@@ -274,8 +300,7 @@ h5 {
 
 ul {
   width: 100%;
-  height: calc(100vh - 35%);
-  overflow-y: auto;
+  
 }
 
 li {
