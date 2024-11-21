@@ -62,7 +62,7 @@ onMounted(() => {
         </div>
         <div class="btn">
           <button @click="handleModify">수정하기</button>
-          <button @click="router.push({ name: 'home' })">뒤로</button>
+          <button @click="router.push({ name: 'mypage' })">뒤로</button>
         </div>
       </div>
     </template>
