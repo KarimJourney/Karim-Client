@@ -35,9 +35,9 @@ const handleSubmit = async () => {
   if (form.value.name && form.value.startDate && form.value.endDate) {
     try {
       const newPlan = { ...form.value };
-      const response = await axios.post("/plan/new", newPlan); // 서버에 여행 계획 추가
-      emit("addPlan", response.data); // 추가된 계획을 부모로 전달
-      closeModal(); // 저장 후 모달 닫기
+      const response = await axios.post("/plan", newPlan); // 서버에 여행 계획 추가
+      console.log(response.data);
+      emit("close"); // 추가된 계획을 부모로 전달
     } catch (error) {
       console.error("여행 계획을 추가하는 데 실패했습니다.", error);
     }

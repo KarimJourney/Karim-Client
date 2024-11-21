@@ -11,17 +11,21 @@ const loginStore = useLoginStore();
 
 const route = useRoute();
 const router = useRouter();
+
+let map = null;
+let markers = [];
 const plan = ref({}); 
 const places = ref([]); 
 const isEditing = ref(false);
 
 onMounted(async () => {
+  const userId = loginStore.getId;
   const planId = route.params.id;
   try {
-    const param = ref({ id: planId, userId: loginStore.getId });
-    const response = await axios.post(`/plan/${planId}`, param.value);
+    const response = await axios.get(`/plan/detail/${userId}/${planId}`);
+    console.log(response);
     plan.value = response.data.plan;
-    places.value = response.data.data;
+    places.value = response.data.place;
 
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&autoload=false`;
@@ -45,12 +49,10 @@ onMounted(async () => {
     };
     document.head.appendChild(script);
   } catch (error) {
-    console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
+    console.error("여행 계획과 장소를 가져오는 데 실패했습니다.", error);
   }
 });
 
-let map = null;
-let markers = [];
 
 // 마커 추가 함수
 const addMarkers = () => {

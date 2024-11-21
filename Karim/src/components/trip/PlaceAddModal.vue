@@ -29,6 +29,7 @@ const trips = ref({});
 
 
 onMounted(async () => {
+  console.log(props.place);
   try {
     const userId = ref({
       userId: loginStore.getId,

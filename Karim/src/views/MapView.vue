@@ -352,7 +352,7 @@ watch(
             <li v-for="place in places">
             <div class="name" @click="getPlace(place)">{{ place.name }}</div>
             <div class="address">{{ place.address }}</div>
-            <button @click="showModal = true">추가</button>
+            <button @click="attraction = place; showModal = true">추가</button>
           </li>
           </template>
           <template v-else>
@@ -366,7 +366,7 @@ watch(
     </div>
   </section>
 
-  <PlaceAddModal v-show="showModal" @close="showModal = false" />
+  <PlaceAddModal v-show="showModal" :place=attraction @close="showModal = false" />
 </template>
 
 <style scoped>
