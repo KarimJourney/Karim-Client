@@ -29,7 +29,7 @@ onMounted(() => {
 <template>
   <section class="qna-section">
     <div class="qna-header">
-      <h1>QnA 목록</h1>
+      <h1>FAQ</h1>
     </div>
 
     <div v-if="isLoading" class="loading">
