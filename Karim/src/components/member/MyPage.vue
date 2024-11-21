@@ -9,34 +9,26 @@ const showModal = ref(false);
 const loginStore = useLoginStore();
 
 const userId = loginStore.getId;
-const member = ref({
-  userId: "",
-  userName: "",
-}); // 사용자 정보를 저장할 ref
+const member = ref({}); // 사용자 정보를 저장할 ref
 const plans = ref([]);
 const msg = ref("");
 const router = useRouter();
 
 // 컴포넌트가 마운트될 때 여행 계획 목록을 불러옵니다.
-onMounted(() => {
-  fetchData();
-});
-
-// 여행 계획 목록을 가져오는 함수
-const fetchData = async () => {
+onMounted(async () => {
   try {
     const response = await axios.get(`/member/${userId}`);
+    member.value = response.data;
   } catch (error) {
     console.error("회원 정보를 가져오는 데 실패했습니다.", error);
   }
   try {
     const response = await axios.get(`/plan/${userId}`);
-    console.log(response.data.data);
-    plans.value = response.data.data;
+    plans.value = response.data;
   } catch (error) {
     console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
   }
-};
+});
 
 // 여행 계획 추가
 const addPlan = async (plan) => {
@@ -58,10 +50,10 @@ const goToPlaceList = (planId) => {
 <template>
   <section>
     <div class="profile-header">
-      <h2>{{ member.userName }}</h2>
-      <h5>@{{ member.userId }}</h5>
+      <h2>{{ member.nickname }}</h2>
+      <h5>@{{ member.id }}</h5>
       <div class="btn">
-        <template v-if="loginStore.getId === member.id"
+        <template v-if="userId == member.id"
           ><button @click="router.push({ name: 'memberedit' })">
             내 정보 수정
           </button>
