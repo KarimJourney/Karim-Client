@@ -62,7 +62,7 @@ const toggleUserMenu = () => {
             <template v-if="showMenu">
               <div class="dropdown">
               <li @click="logout">로그아웃</li>
-            <li @click="router.push({ name: 'mypage' }); showMenu = false">내 여행</li>
+            <li @click="router.push({ name: 'mypage' }); showMenu = false">내 정보</li>
             <li @click="router.push({ name: 'hotplace' }); showMenu = false">즐겨찾기</li>
             </div>
             </template>

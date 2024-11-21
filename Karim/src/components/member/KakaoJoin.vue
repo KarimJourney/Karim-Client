@@ -21,15 +21,17 @@ const getToken = async () => {
       const accessToken = response.data.accessToken;
       const memberId = response.data.member.id;
       const nickname = response.data.member.nickname;
+      const profileImageUrl = response.data.member.profileImageUrl;
       const refreshToken = response.data.refreshToken;
 
       console.log("Access Token:", accessToken);
       console.log("Member ID:", memberId);
       console.log("Nickname:", nickname);
+      console.log("ProfileImageUrl:", profileImageUrl);
       console.log("Refresh Token:", refreshToken);
 
       // Pinia 스토어에 로그인 상태 설정
-      loginStore.setLogin(true, memberId, nickname);
+      loginStore.setLogin(true, memberId, nickname, profileImageUrl);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 

@@ -50,23 +50,34 @@ const goToPlaceList = (planId) => {
 <template>
   <section>
     <div class="profile-header">
-      <h2>{{ member.nickname }}</h2>
-      <h5>@{{ member.id }}</h5>
-      <div class="btn">
-        <template v-if="userId == member.id"
-          ><button @click="router.push({ name: 'memberedit' })">
-            내 정보 수정
+      <div
+        class="profile-picture"
+        :style="{ backgroundImage: `url(${member.profileImageUrl || 'default-image-url.jpg'})` }"
+      ></div>
+      <div class="profile-info">
+        <h2>{{ member.nickname }}</h2>
+        <h5>@{{ member.id }}</h5>
+        <div class="btn">
+          <template v-if="userId == member.id">
+            <button
+              @click="router.push({ name: 'memberedit' })"
+              class="edit-profile"
+            >
+              내 정보 수정
+            </button>
+          </template>
+          <button @click="showModal = true" class="add-plan">
+            새 여행 계획 추가
           </button>
-        </template>
-        <button @click="showModal = true">새 여행 계획 추가</button>
+        </div>
       </div>
     </div>
 
     <div class="profile-trip">
       <ul>
         <template v-if="plans.length">
-          <li v-for="(plan, index) in plans" :key="index">
-            <a @click="goToPlaceList(plan.id)">
+          <li v-for="(plan, index) in plans" :key="index" class="trip-item">
+            <a @click="goToPlaceList(plan.id)" class="trip-link">
               <h3>{{ plan.name }}</h3>
               <p>{{ plan.startDate }} ~ {{ plan.endDate }}</p>
             </a>
@@ -88,54 +99,136 @@ const goToPlaceList = (planId) => {
 </template>
 
 <style scoped>
-.btn {
-  width: 100%;
+body {
+  background-color: #e5e7eb;
+  font-family: "Roboto", sans-serif;
+  color: #333;
+}
+
+.profile-header {
   display: flex;
-  justify-content: end;
-  gap: 20px;
-  margin-bottom: 30px;
+  flex-direction: row;
+  align-items: center;
+  padding: 40px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin-bottom: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin-right: 30px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+h5 {
+  font-size: 16px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.btn {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.edit-profile,
+.add-plan {
+  background-color: var(--navy);;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+
+.edit-profile:hover,
+.add-plan:hover {
+  background-color: var(--navy);
+}
+
+.profile-trip {
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 ul {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  width: 100%;
+  padding: 0;
+  list-style: none;
 }
-li {
-  width: 30%;
-  box-sizing: border-box;
-  border: solid 1px var(--purple);
-  border-radius: 10px;
-  padding: 1vw;
+
+.trip-item {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-a {
+
+.trip-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.trip-link {
+  text-decoration: none;
+  color: inherit;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  height: 100%;
-}
-h3 {
-  margin: 0;
-  padding-top: 15px;
-}
-p {
-  padding-bottom: 15px;
-}
-
-#no_plan {
-  border: none;
-  font-weight: 600;
-  font-size: 30px;
-  width: 100%;
+  padding: 20px;
   text-align: center;
 }
 
-@media screen and (max-width: 768px) {
-  li {
-    width: 48%;
-  }
+h3 {
+  font-size: 20px;
+  margin: 0;
+  color: #1f2937;
+}
+
+p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+#no_plan {
+  font-weight: 500;
+  font-size: 20px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 50px;
 }
 </style>
