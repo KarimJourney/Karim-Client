@@ -242,25 +242,25 @@ const editPlan = async (plan) => {
 </template>
 
 <style scoped>
-/* 전체 섹션 레이아웃 */
 section {
   display: flex;
+  justify-content: space-between;
   height: calc(100vh - 85px);
 }
 
-/* 사이드바 스타일 */
 aside {
-  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30vw;
   min-width: 320px;
   max-width: 500px;
-  padding: 20px;
+  gap: 20px;
   box-sizing: border-box;
   background-color: #f0f4f8;
-  overflow-y: auto;
   position: relative;
 }
 
-/* 닫기 버튼 스타일 */
 #close {
   position: absolute;
   top: 20px;
@@ -270,15 +270,16 @@ aside {
   color: var(--grey);
 }
 
-/* 정보 섹션 스타일 */
 #info {
-  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
 }
 
 #info h2 {
   font-size: 1.8em;
   color: var(--black);
-  margin-bottom: 5px;
 }
 
 #info h2 span {
@@ -291,7 +292,6 @@ aside {
 #info h4 {
   font-size: 1.2em;
   color: #495057;
-  margin-bottom: 10px;
 }
 
 #info .content {
@@ -299,21 +299,27 @@ aside {
   color: #6c757d;
 }
 
-/* 편집 버튼 스타일 */
 #edit {
+  width: 100%;
+  display: flex;
+  justify-content: end;
   text-align: right;
-  margin-bottom: 20px;
-}
-
-#edit span {
-  font-size: 1em;
-  color: var(--navy);
   cursor: pointer;
 }
 
-/* 장소 리스트 스타일 */
+.items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  gap: 15px;
+  height: calc(100vh - 85px);
+}
+
 .place {
-  margin-bottom: 20px;
+  width: 100%;
+  height: calc(100vh - 35%);
+  overflow-y: auto;
 }
 
 .place h3 {
