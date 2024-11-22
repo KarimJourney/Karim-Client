@@ -246,7 +246,7 @@ export default {
   align-self: flex-start; /* 챗봇 채팅을 왼쪽 정렬 */
   background-color: #f1f1f1;
   color: #333;
-  border-radius: 0px 15px 15px 15px; /* 왼쪽하단 각짐 */
+  border-radius: 0px 10px 10px 10px; /* 왼쪽하단 각짐 */
 }
 
 .input-container {

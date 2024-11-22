@@ -241,158 +241,180 @@ const editPlan = async (plan) => {
 </template>
 
 <style scoped>
+/* 전체 섹션 레이아웃 */
 section {
   display: flex;
-  justify-content: space-between;
   height: calc(100vh - 85px);
 }
 
+/* 사이드바 스타일 */
 aside {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 30vw;
+  width: 30%;
   min-width: 320px;
   max-width: 500px;
-  gap: 20px;
+  padding: 20px;
   box-sizing: border-box;
-  padding: 10px 25px;
-}
-
-#info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-h2, h4 {
-  margin: 0;
-}
-
-h2 {
-  color: var(--black);
-}
-
-h2 span {
-  font-size: 0.5em;
-  text-decoration: underline;
-  color: var(--light-grey);
-  font-weight: 100;
-}
-
-aside {
+  background-color: #f0f4f8;
+  overflow-y: auto;
   position: relative;
 }
 
-.content {
-  font-size: 1.1em;
-}
-
-h4 span {
-  color: var(--light-grey);
-}
-
-#edit {
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  font-size: 0.9em;
-}
-
+/* 닫기 버튼 스타일 */
 #close {
   position: absolute;
-  right: 5px;
-  top: 5px;
+  top: 20px;
+  right: 20px;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: var(--navy);
+}
+
+/* 정보 섹션 스타일 */
+#info {
+  margin-bottom: 20px;
+}
+
+#info h2 {
+  font-size: 1.8em;
+  color: var(--navy);
+  margin-bottom: 5px;
+}
+
+#info h2 span {
+  font-size: 0.5em;
+  color: var(--navy);
+  text-decoration: underline;
   cursor: pointer;
 }
 
-.items {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 15px;
-  height: calc(100vh - 20%);
+#info h4 {
+  font-size: 1.2em;
+  color: #495057;
+  margin-bottom: 10px;
 }
 
+#info .content {
+  font-size: 1em;
+  color: #6c757d;
+}
+
+/* 편집 버튼 스타일 */
+#edit {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+#edit span {
+  font-size: 1em;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+/* 장소 리스트 스타일 */
 .place {
-  width: 90%;
-  height: calc(100vh - 35%);
-  overflow-y: auto;
-}
-
-.place div{ 
-  border-bottom: solid 1px var(--light-grey);
-
-}
-.place div:last-child {
-  border: none;
-}
-
-.place .place-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 1px;
+  margin-bottom: 20px;
 }
 
 .place h3 {
-  color: var(--dark-grey);
-  padding-top: 10px;
+  font-size: 1.4em;
+  color: var(--navy);
+  margin-bottom: 10px;
 }
 
-.place-item .icon {
-  position: absolute;
-  transform: translateY(269%);
+.place ul {
+  list-style: none;
+  padding: 0;
 }
 
-.input-cost {
-  width: calc(100% - 40px);
-  padding: 7px 20px;
+.place li {
+  background-color: #ffffff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: background-color 0.3s;
 }
 
-
-ul {
-  width: 100%;
+.place li:hover {
+  background-color: #f1f5f9;
 }
 
-li {
-  padding: 15px 0;
-  position: relative;
-  word-break: keep-all;
+.place-item {
+  display: flex;
+  flex-direction: column;
 }
 
-li .name {
-  color: var(--black);
+.place-item h4 {
+  font-size: 1.2em;
+  color: var(--navy);
+  margin-bottom: 5px;
+}
+
+.place-item h5,
+.place-item h6 {
   font-size: 1em;
-  width: 75%;
+  color: #6c757d;
+  margin-bottom: 10px;
 }
 
-li .address {
-  font-size: 0.7em;
-  width: 75%;
+.place-item textarea,
+.place-item .input-cost {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1em;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
 }
 
-li button {
-  color: var(--black);
-  font-size: 0.6em;
+.place-item textarea:focus,
+.place-item .input-cost:focus {
+  border-color: var(--navy);
+  outline: none;
 }
 
-span {
+/* 버튼 스타일 */
+.btn {
+  display: flex;
+  gap: 10px;
+}
+
+.btn button {
+  padding: 8px 12px;
+  font-size: 0.9em;
+  color: #ffffff;
+  background-color: var(--navy);
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
+.btn button:nth-child(3) {
+  background-color: #c9302c;
+}
+
+.btn button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn button:hover:not(:disabled) {
+  background-color: #003366;
+}
+
+.btn button:nth-child(3):hover:not(:disabled) {
+  background-color: #ac2925;
+}
+
+/* 지도 영역 스타일 */
 .map-wrapper {
+  flex: 1;
   position: relative;
-  width: 100%;
-  height: 100%;
-  margin-left: 10px;
 }
 
 #map {
   width: 100%;
   height: 100%;
 }
+
 </style>
