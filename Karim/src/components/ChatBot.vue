@@ -102,19 +102,22 @@ export default {
       this.isLoading = true; // 로딩 시작
 
       try {
-        const response = await axios.post(
+        // 1단계: 여행 관련 여부 판단
+        const relevanceCheckPayload = {
+          model: "gpt-4o-2024-11-20",
+          messages: [
+            {
+              role: "system",
+              content:
+                "다음 사용자의 메시지가 여행, 관광, 숙박, 맛집, 여행 팁 등에 관련되어 있는지 판단하세요. 'Yes' 또는 'No'로만 답변하세요.",
+            },
+            { role: "user", content: userMessage },
+          ],
+        };
+
+        const relevanceCheckResponse = await axios.post(
           "https://api.openai.com/v1/chat/completions",
-          {
-            model: "gpt-4o-2024-11-20",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "안녕하세요! 저는 여행 정보를 전문적으로 제공하는 챗봇입니다. 추천 여행지, 맛집, 숙소, 여행 팁 등에 대한 정보를 사용자 맞춤형으로 제공합니다.",
-              },
-              { role: "user", content: userMessage },
-            ],
-          },
+          relevanceCheckPayload,
           {
             headers: {
               Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
@@ -123,7 +126,45 @@ export default {
           }
         );
 
-        const botMessage = response.data.choices[0].message.content;
+        const relevance = relevanceCheckResponse.data.choices[0].message.content.trim();
+
+        // 관련성이 없다고 판단된 경우 처리
+        if (relevance.toLowerCase() === "no") {
+          this.messages.push({
+            sender: "bot",
+            text: "죄송합니다. 저는 여행 관련 질문에만 답변할 수 있습니다.",
+          });
+          this.isLoading = false; // 로딩 종료
+          return;
+        }
+
+        // 2단계: 여행 관련된 질문만 GPT에 요청
+        const responsePayload = {
+          model: "gpt-4o-2024-11-20",
+          messages: [
+            {
+              role: "system",
+              content:
+                "안녕하세요! 당신은 여행 전문 챗봇입니다. " +
+                "여행, 관광, 숙박, 맛집, 여행 팁 등에 대한 질문에만 답변하세요. " +
+                "질문에 여행과 무관한 요소가 포함되어 있으면, 무관한 부분은 무시하고 여행 관련 정보에만 답변하세요.",
+            },
+            { role: "user", content: userMessage },
+          ],
+        };
+
+        const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          responsePayload,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const botMessage = response.data.choices[0].message.content.trim();
         this.messages.push({ sender: "bot", text: botMessage });
       } catch (error) {
         console.error("Error:", error);
@@ -140,6 +181,7 @@ export default {
 </script>
 
 <style scoped>
+/* 기존 스타일 그대로 유지 */
 .chatbot-container {
   position: fixed;
   bottom: 20px;
@@ -182,7 +224,7 @@ export default {
 
 .title-container {
   display: flex;
-  align-items: center; /* 텍스트와 초록 점 수평 정렬 */
+  align-items: center;
 }
 
 .header-title {
@@ -218,8 +260,8 @@ export default {
 .messages {
   flex: 1;
   display: flex;
-  flex-direction: column; /* 메시지를 세로로 쌓기 */
-  justify-content: flex-start; /* 위에서부터 정렬 */
+  flex-direction: column;
+  justify-content: flex-start;
   overflow-y: auto;
   margin-bottom: 10px;
 }
@@ -235,18 +277,18 @@ export default {
 }
 
 .message.user {
-  align-self: flex-end; /* 사용자 채팅을 오른쪽 정렬 */
+  align-self: flex-end;
   background-color: #e1f5fe;
   color: #000;
-  border-radius: 10px 0px 10px 10px; /* 오른쪽하단 각짐 */
+  border-radius: 10px 0px 10px 10px;
   margin-right: 10px;
 }
 
 .message.bot {
-  align-self: flex-start; /* 챗봇 채팅을 왼쪽 정렬 */
+  align-self: flex-start;
   background-color: #f1f1f1;
   color: #333;
-  border-radius: 0px 10px 10px 10px; /* 왼쪽하단 각짐 */
+  border-radius: 0px 10px 10px 10px;
 }
 
 .input-container {
