@@ -192,9 +192,10 @@ const editPlan = async (plan) => {
           <span v-show="isEditing" @click="updatePlace">완료</span>
         </div>
         <div class="place">
-          <template v-for="(place, date) in placeLists">
+          <template v-for="(place, date, index) in placeLists">
           <div>
-            <h3>{{ date }}</h3>
+            <h3>Day {{ index + 1 }}</h3>
+            <h4 class="date">{{ date }}</h4>
             <ul>
               <li v-for="(p, index) in place">
                 <div class="place-item" @click="getPlace(p)">
@@ -266,7 +267,7 @@ aside {
   right: 20px;
   font-size: 1.2em;
   cursor: pointer;
-  color: var(--navy);
+  color: var(--grey);
 }
 
 /* 정보 섹션 스타일 */
@@ -276,13 +277,13 @@ aside {
 
 #info h2 {
   font-size: 1.8em;
-  color: var(--navy);
+  color: var(--black);
   margin-bottom: 5px;
 }
 
 #info h2 span {
   font-size: 0.5em;
-  color: var(--navy);
+  color: var(--light-grey);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -318,6 +319,12 @@ aside {
 .place h3 {
   font-size: 1.4em;
   color: var(--navy);
+  margin-bottom: 10px;
+}
+
+.place h4 {
+  font-size: 1.2em;
+  color: var(--grey);
   margin-bottom: 10px;
 }
 
