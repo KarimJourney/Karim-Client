@@ -105,7 +105,7 @@ export default {
         const response = await axios.post(
           "https://api.openai.com/v1/chat/completions",
           {
-            model: "gpt-4",
+            model: "gpt-4o-2024-11-20",
             messages: [
               {
                 role: "system",
@@ -217,6 +217,9 @@ export default {
 
 .messages {
   flex: 1;
+  display: flex;
+  flex-direction: column; /* 메시지를 세로로 쌓기 */
+  justify-content: flex-start; /* 위에서부터 정렬 */
   overflow-y: auto;
   margin-bottom: 10px;
 }
@@ -232,16 +235,18 @@ export default {
 }
 
 .message.user {
-  align-self: flex-end;
-  float: right;
+  align-self: flex-end; /* 사용자 채팅을 오른쪽 정렬 */
   background-color: #e1f5fe;
   color: #000;
+  border-radius: 10px 0px 10px 10px; /* 오른쪽하단 각짐 */
+  margin-right: 10px;
 }
 
 .message.bot {
-  align-self: flex-start;
+  align-self: flex-start; /* 챗봇 채팅을 왼쪽 정렬 */
   background-color: #f1f1f1;
   color: #333;
+  border-radius: 0px 15px 15px 15px; /* 왼쪽하단 각짐 */
 }
 
 .input-container {
