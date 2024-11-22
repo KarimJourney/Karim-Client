@@ -7,15 +7,24 @@ const isLoading = ref(true);
 const errorMessage = ref("");
 
 const fetchBoardList = async () => {
-  try {
-    const response = await axios.get("/board");
-    posts.value = response.data;
-  } catch (error) {
-    console.error("게시판 데이터를 가져오는 데 실패했습니다.", error);
-    errorMessage.value = "데이터를 가져오는 중 오류가 발생했습니다.";
-  } finally {
-    isLoading.value = false;
-  }
+  // try {
+  //   const response = await axios.get("/board");
+  //   posts.value = response.data;
+  // } catch (error) {
+  //   console.error("게시판 데이터를 가져오는 데 실패했습니다.", error);
+  //   errorMessage.value = "데이터를 가져오는 중 오류가 발생했습니다.";
+  // } finally {
+  //   isLoading.value = false;
+  // }
+  posts.value = [
+    { id: 1, userId: 11, nickname: "닉네임1", title: "첫 번째 게시물", hit: 34, upload_date: "2024-11-22" },
+    { id: 2, userId: 12, nickname: "닉네임2", title: "두 번째 게시물", hit: 12, upload_date: "2024-11-21" },
+    { id: 3, userId: 13, nickname: "닉네임3", title: "세 번째 게시물", hit: 47, upload_date: "2024-11-20" },
+    { id: 4, userId: 14, nickname: "닉네임4", title: "네 번째 게시물", hit: 21, upload_date: "2024-11-19" },
+    { id: 5, userId: 15, nickname: "닉네임5", title: "다섯 번째 게시물", hit: 18, upload_date: "2024-11-18" },
+    { id: 6, userId: 16, nickname: "닉네임6", title: "여섯 번째 게시물", hit: 9, upload_date: "2024-11-17" },
+  ];
+  isLoading.value = false;
 };
 
 onMounted(() => {
@@ -26,7 +35,7 @@ onMounted(() => {
 <template>
   <section>
     <!-- <div class="board-header">
-      <h1>커뮤니티</h1>
+      <h1>여행기</h1>
     </div> -->
 
     <div v-if="isLoading" class="loading">
@@ -37,15 +46,14 @@ onMounted(() => {
       {{ errorMessage }}
     </div>
 
-    <div v-else class="board-list">
+    <div v-else class="board-gallery">
       <ul>
         <template v-if="posts.length">
-          <li v-for="(post, index) in posts" :key="index" class="board-item">
-            <div class="board-content">
-              <h3>{{ post.title }}</h3>
-              <p class="author">작성자: {{ post.nickname }}</p>
-              <p class="date">조회수: {{ post.hit }}</p>
-              <p class="date">작성일: {{ post.upload_date }}</p>
+          <li v-for="(post, index) in posts" :key="post.id" class="board-item">
+            <div class="board-card">
+              <div class="board-thumbnail"><img :src="post.img"></div>
+              <h3 class="board-title">{{ post.title }}</h3>
+              <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회 | {{ post.upload_date }}</p>
             </div>
           </li>
         </template>
@@ -59,7 +67,7 @@ onMounted(() => {
 
 <style scoped>
 section {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   background-color: #ffffff;
@@ -73,11 +81,12 @@ section {
 }
 
 .board-header h1 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: #111827;
 }
 
+/* 로딩 및 에러 */
 .loading,
 .error,
 .no-board {
@@ -87,61 +96,55 @@ section {
   margin-top: 20px;
 }
 
-.board-list ul {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* 갤러리 스타일 */
+.board-gallery ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
   padding: 0;
   list-style: none;
 }
 
 .board-item {
-  background-color: #f9fafb;
-  padding: 15px;
+  background-color: var(--white);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .board-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  background-color: var(--navy);
-  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.board-content h3 {
+.board-card {
+  padding: 15px;
+  text-align: center;
+}
+
+.board-thumbnail {
+  width: 100%;
+  height: 150px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.board-title {
   font-size: 18px;
   font-weight: bold;
-  color: #1f2937;
-  transition: color 0.3s ease;
+  color: var(--navy);
+  margin: 10px 0;
 }
 
-.board-content p {
+.board-meta {
   font-size: 14px;
-  color: #6b7280;
-  margin-top: 10px;
-  transition: color 0.3s ease;
-}
-
-.board-item:hover .board-content h3,
-.board-item:hover .board-content p {
-  color: white;
-}
-
-.author {
-  font-style: italic;
-  color: #9ca3af;
-}
-
-.date {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: 5px;
+  color: var(--grey);
 }
 
 .no-board {
-  color: #9ca3af;
+  color: var(--light-grey);
   font-style: italic;
+  text-align: center;
 }
 </style>
