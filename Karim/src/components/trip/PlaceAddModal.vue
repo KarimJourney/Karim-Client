@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useLoginStore } from "@/stores/login";
 import axios from "@/utils/axios";
 import { defineComponent } from 'vue';
@@ -19,11 +19,7 @@ const props = defineProps({
 
 const emit = defineEmits("close");
 const loginStore = useLoginStore();
-const selectedTrip = ref({
-  name:"",
-  startDate:"1970-01-01",
-  endDate:"2099-12-31"
-});
+const selectedTrip = ref(""); // 기본값을 빈 문자열로 설정
 const selectedDate = ref("");
 const trips = ref({});
 
@@ -60,12 +56,14 @@ const addPlace = async () => {
   }
 };
 
+watch(selectedTrip, (newTrip) => {
+  if (newTrip && newTrip.startDate) {
+    selectedDate.value = newTrip.startDate;
+  }
+});
+
 const closeModal = () => {
-  selectedTrip.value = {
-    name:"",
-    startDate:"1970-01-01",
-    endDate:"2099-12-31"
-  };
+  selectedTrip.value = "";
   selectedDate.value = "";
   emit('close');
 }
@@ -99,18 +97,24 @@ const closeModal = () => {
         <h6>추가할 계획을 선택한 후 날짜를 입력하세요.</h6>
         <div class="items">
           <div class="item">
+            <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M18 21V6h2q.825 0 1.413.588T22 8v11q0 .825-.587 1.413T20 21zM10 6h4V4h-4zM8 21V4q0-.825.588-1.412T10 2h4q.825 0 1.413.588T16 4v17zm-4 0q-.825 0-1.412-.587T2 19V8q0-.825.588-1.412T4 6h2v15z" />
+	</svg></span>
             <select v-model="selectedTrip">
+              <option value="" disabled selected>계획을 선택하세요.</option>
               <option v-for="trip in trips" :value="trip">{{ trip.name }}</option>
             </select>
           </div>
 
-          <div class="item">
+          <template v-if="selectedTrip">
+            <div class="item">
             <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
                 <path fill="currentColor"
                   d="M32 456a24 24 0 0 0 24 24h400a24 24 0 0 0 24-24V176H32Zm320-244a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm0 80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm-80-80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm0 80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm0 80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm-80-80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm0 80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm-80-80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4Zm0 80a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4v40a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4ZM456 64h-55.92V32h-48v32H159.92V32h-48v32H56a23.8 23.8 0 0 0-24 23.77V144h448V87.77A23.8 23.8 0 0 0 456 64" />
               </svg></span>
-            <input type="date" placeholder="날짜" v-model="selectedDate" :min="selectedTrip.startDate" :max="selectedTrip.endDate" required />
+            <input type="date" v-model="selectedDate" :min="selectedTrip.startDate" :max="selectedTrip.endDate" required />
           </div>
+          </template>
 
           <button id="submit" @click="addPlace">저장</button>
         </div>
@@ -168,6 +172,8 @@ h6 {
 
 .item select {
   width: 100%;
+  padding: 10px 40px;
+  background-color: #F4F4F4;
 }
 
 .item input {
