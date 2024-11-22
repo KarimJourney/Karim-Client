@@ -87,6 +87,8 @@ export default {
         },
       ],
       isLoading: false, // 로딩 상태 추가
+      latitude: 36.0,
+      longitude: 127.0,
     };
   },
   methods: {
@@ -147,8 +149,9 @@ export default {
               content:
                 "안녕하세요! 당신은 여행 전문 챗봇입니다. " +
                 "국내(대한민국) 여행, 국내(대한민국) 관광, 국내(대한민국) 숙박, 국내(대한민국) 맛집, 국내(대한민국) 여행 팁 등에 대한 질문에만 답변하세요. " +
-                "질문에 국내(대한민국) 여행과 무관한 요소가 포함되어 있으면, 무관한 부분은 무시하고 국내(대한민국) 여행 관련 정보에만 답변하세요.",
-            },
+                "질문에 국내(대한민국) 여행과 무관한 요소가 포함되어 있으면, 무관한 부분은 무시하고 국내(대한민국) 여행 관련 정보에만 답변하세요." +
+                `현재 사용자 위치는 위도 ${this.latitude}도, 경도 ${this.longitude} 도 입니다. 사용자가 어떤 장소에 대해 질문하면 사용자의 위치에서 최대한 가까운 장소에 대해 답변하세요.`,
+              },
             { role: "user", content: userMessage },
           ],
         };
@@ -176,6 +179,13 @@ export default {
         this.isLoading = false; // 로딩 종료
       }
     },
+  },
+  mounted() {
+    const self = this;
+  navigator.geolocation.getCurrentPosition(function(cur) {
+    self.latitude = cur.coords.latitude;
+    self.longitude = cur.coords.longitude;
+  });
   },
 };
 </script>
