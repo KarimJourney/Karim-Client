@@ -24,12 +24,124 @@ defineComponent({
   name: 'GgPill',
 });
 
+// 날씨 상태별 아이콘 SVG 매핑 객체 정의
+const weatherIconMapping = {
+  "맑음": `<svg style="color: #F2B758;" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
+              viewBox="0 0 24 24">
+              <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path fill="currentColor" fill-opacity="0" stroke-dasharray="36" stroke-dashoffset="36"
+                  d="M12 7c2.76 0 5 2.24 5 5c0 2.76 -2.24 5 -5 5c-2.76 0 -5 -2.24 -5 -5c0 -2.76 2.24 -5 5 -5">
+                  <animate fill="freeze" attributeName="fill-opacity" begin="1s" dur="0.5s" values="0;1" />
+                  <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="36;0" />
+                </path>
+                <path stroke-dasharray="2" stroke-dashoffset="2" d="M12 19v1M19 12h1M12 5v-1M5 12h-1" opacity="0">
+                  <animate fill="freeze" attributeName="d" begin="0.6s" dur="0.2s"
+                    values="M12 19v1M19 12h1M12 5v-1M5 12h-1;M12 21v1M21 12h1M12 3v-1M3 12h-1" />
+                  <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="2;0" />
+                  <set fill="freeze" attributeName="opacity" begin="0.6s" to="1" />
+                  <animateTransform attributeName="transform" dur="30s" repeatCount="indefinite" type="rotate"
+                    values="0 12 12;360 12 12" />
+                </path>
+                <path stroke-dasharray="2" stroke-dashoffset="2"
+                  d="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5" opacity="0">
+                  <animate fill="freeze" attributeName="d" begin="0.8s" dur="0.2s"
+                    values="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5;M18.5 18.5l0.5 0.5M18.5 5.5l0.5 -0.5M5.5 5.5l-0.5 -0.5M5.5 18.5l-0.5 0.5" />
+                  <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="2;0" />
+                  <set fill="freeze" attributeName="opacity" begin="0.8s" to="1" />
+                  <animateTransform attributeName="transform" dur="30s" repeatCount="indefinite" type="rotate"
+                    values="0 12 12;360 12 12" />
+                </path>
+              </g>
+            </svg>`,
+  "맑음 밤": `<svg style="color: #F2B758;" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+		<g fill="none" stroke="currentColor" stroke-dasharray="4" stroke-dashoffset="4" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M13 4h1.5M13 4h-1.5M13 4v1.5M13 4v-1.5">
+				<animate id="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0" fill="freeze" attributeName="stroke-dashoffset" begin="0.6s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+6s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+4s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+1.2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+3.2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+5.2s" dur="0.4s" values="0;4" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+1.8s" to="M12 5h1.5M12 5h-1.5M12 5v1.5M12 5v-1.5" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+3.8s" to="M12 4h1.5M12 4h-1.5M12 4v1.5M12 4v-1.5" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition0.begin+5.8s" to="M13 4h1.5M13 4h-1.5M13 4v1.5M13 4v-1.5" />
+			</path>
+			<path d="M19 11h1.5M19 11h-1.5M19 11v1.5M19 11v-1.5">
+				<animate id="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1" fill="freeze" attributeName="stroke-dashoffset" begin="1s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+6s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+4s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+1.2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+3.2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+5.2s" dur="0.4s" values="0;4" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+1.8s" to="M17 11h1.5M17 11h-1.5M17 11v1.5M17 11v-1.5" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+3.8s" to="M18 12h1.5M18 12h-1.5M18 12v1.5M18 12v-1.5" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition1.begin+5.8s" to="M19 11h1.5M19 11h-1.5M19 11v1.5M19 11v-1.5" />
+			</path>
+			<path d="M19 4h1.5M19 4h-1.5M19 4v1.5M19 4v-1.5">
+				<animate id="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2" fill="freeze" attributeName="stroke-dashoffset" begin="2.8s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+6s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+2s" dur="0.4s" values="4;0" />
+				<animate fill="freeze" attributeName="stroke-dashoffset" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+1.2s;lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+3.2s" dur="0.4s" values="0;4" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+1.8s" to="M20 5h1.5M20 5h-1.5M20 5v1.5M20 5v-1.5" />
+				<set fill="freeze" attributeName="d" begin="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition2.begin+5.8s" to="M19 4h1.5M19 4h-1.5M19 4v1.5M19 4v-1.5" />
+			</path>
+		</g>
+		<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+			<g>
+				<path stroke-dasharray="2" stroke-dashoffset="4" d="M12 21v1M21 12h1M12 3v-1M3 12h-1">
+					<animate fill="freeze" attributeName="stroke-dashoffset" dur="0.2s" values="4;2" />
+				</path>
+				<path stroke-dasharray="2" stroke-dashoffset="4" d="M18.5 18.5l0.5 0.5M18.5 5.5l0.5 -0.5M5.5 5.5l-0.5 -0.5M5.5 18.5l-0.5 0.5">
+					<animate fill="freeze" attributeName="stroke-dashoffset" begin="0.2s" dur="0.2s" values="4;2" />
+				</path>
+				<set fill="freeze" attributeName="opacity" begin="0.5s" to="0" />
+			</g>
+			<path fill="currentColor" d="M7 6 C7 12.08 11.92 17 18 17 C18.53 17 19.05 16.96 19.56 16.89 C17.95 19.36 15.17 21 12 21 C7.03 21 3 16.97 3 12 C3 8.83 4.64 6.05 7.11 4.44 C7.04 4.95 7 5.47 7 6 Z" opacity="0">
+				<set fill="freeze" attributeName="opacity" begin="0.5s" to="1" />
+			</path>
+		</g>
+		<mask id="lineMdSunnyFilledLoopToMoonFilledAltLoopTransition3">
+			<circle cx="12" cy="12" r="12" fill="#fff" />
+			<circle cx="22" cy="2" r="3" fill="#fff">
+				<animate fill="freeze" attributeName="cx" begin="0.1s" dur="0.4s" values="22;18" />
+				<animate fill="freeze" attributeName="cy" begin="0.1s" dur="0.4s" values="2;6" />
+				<animate fill="freeze" attributeName="r" begin="0.1s" dur="0.4s" values="3;12" />
+			</circle>
+			<circle cx="22" cy="2" r="1">
+				<animate fill="freeze" attributeName="cx" begin="0.1s" dur="0.4s" values="22;18" />
+				<animate fill="freeze" attributeName="cy" begin="0.1s" dur="0.4s" values="2;6" />
+				<animate fill="freeze" attributeName="r" begin="0.1s" dur="0.4s" values="1;10" />
+			</circle>
+		</mask>
+		<circle cx="12" cy="12" r="6" mask="url(#lineMdSunnyFilledLoopToMoonFilledAltLoopTransition3)" fill="currentColor">
+			<animate fill="freeze" attributeName="r" begin="0.1s" dur="0.4s" values="6;10" />
+			<set fill="freeze" attributeName="opacity" begin="0.5s" to="0" />
+		</circle>
+	</svg>`,
+  "구름 조금": `<svg style="color: #dddddd; xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+		<path fill="currentColor" d="M19.36 10.04C18.67 6.59 15.64 4 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5c0-2.64-2.05-4.78-4.64-4.96" />
+	</svg>`,
+  "구름 많음": `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 36 36">
+		<path fill="#ccd6dd" d="M27 8a7 7 0 0 0-2.015.298c.005-.1.015-.197.015-.298a5.998 5.998 0 0 0-11.785-1.573A6 6 0 0 0 11 6a6 6 0 1 0 0 12a6 6 0 0 0 5.785-4.428A6 6 0 0 0 19 14c.375 0 .74-.039 1.096-.104c-.058.36-.096.727-.096 1.104c0 3.865 3.135 7 7 7s7-3.135 7-7a7 7 0 0 0-7-7" />
+		<path fill="#e1e8ed" d="M31 22c-.467 0-.91.085-1.339.204c.216-.526.339-1.1.339-1.704a4.5 4.5 0 0 0-4.5-4.5a4.46 4.46 0 0 0-2.701.921A6.5 6.5 0 0 0 16.5 12a6.5 6.5 0 0 0-6.131 4.357A8 8 0 1 0 8 32h23c2.762 0 5-2.238 5-5s-2.238-5-5-5" />
+	</svg>`,
+  흐림: `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 36 36">
+		<path fill="#ccd6dd" d="M27 8a7 7 0 0 0-2.015.298c.005-.1.015-.197.015-.298a5.998 5.998 0 0 0-11.785-1.573A6 6 0 0 0 11 6a6 6 0 1 0 0 12a6 6 0 0 0 5.785-4.428A6 6 0 0 0 19 14c.375 0 .74-.039 1.096-.104c-.058.36-.096.727-.096 1.104c0 3.865 3.135 7 7 7s7-3.135 7-7a7 7 0 0 0-7-7" />
+		<path fill="#e1e8ed" d="M31 22c-.467 0-.91.085-1.339.204c.216-.526.339-1.1.339-1.704a4.5 4.5 0 0 0-4.5-4.5a4.46 4.46 0 0 0-2.701.921A6.5 6.5 0 0 0 16.5 12a6.5 6.5 0 0 0-6.131 4.357A8 8 0 1 0 8 32h23c2.762 0 5-2.238 5-5s-2.238-5-5-5" />
+	</svg>`,
+  비: `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 36 36">
+		<path fill="#e1e8ed" d="M28 4c-.825 0-1.62.125-2.369.357A6.5 6.5 0 0 0 19.5 0c-3.044 0-5.592 2.096-6.299 4.921A4.46 4.46 0 0 0 10.5 4A4.5 4.5 0 0 0 6 8.5c0 .604.123 1.178.339 1.704A5 5 0 0 0 5 10c-2.762 0-5 2.238-5 5s2.238 5 5 5h23a8 8 0 1 0 0-16" />
+		<path fill="#5dadec" d="m11.999 24.961l-.113-3.421l-2.87 1.708a1.97 1.97 0 0 0-1.036 1.799A2.033 2.033 0 0 0 10.056 27a1.975 1.975 0 0 0 1.943-2.039m-1.979 7.46L9.907 29l-2.87 1.708a1.97 1.97 0 0 0-1.036 1.799a2.033 2.033 0 0 0 2.076 1.953a1.974 1.974 0 0 0 1.943-2.039m-5-4.46l-.113-3.421l-2.87 1.708a1.97 1.97 0 0 0-1.036 1.799A2.034 2.034 0 0 0 3.077 30a1.974 1.974 0 0 0 1.943-2.039m18-3l-.113-3.421l-2.869 1.708a1.96 1.96 0 0 0-1.036 1.799A2.033 2.033 0 0 0 21.078 27a1.974 1.974 0 0 0 1.942-2.039m-6.021 4l-.113-3.421l-2.869 1.708a1.96 1.96 0 0 0-1.036 1.799A2.033 2.033 0 0 0 15.057 31a1.974 1.974 0 0 0 1.942-2.039m5.021 4.46L21.906 30l-2.869 1.708a1.96 1.96 0 0 0-1.036 1.799a2.033 2.033 0 0 0 2.076 1.953a1.974 1.974 0 0 0 1.943-2.039m6.979-5.46l-.113-3.421l-2.869 1.708a1.96 1.96 0 0 0-1.036 1.799A2.033 2.033 0 0 0 27.057 30a1.974 1.974 0 0 0 1.942-2.039" />
+	</svg>`,
+  "비/눈": `<svg style="color: #999999; xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M4 17h14a4 4 0 0 0 0-8a5 5 0 0 0-9.88 1.68A4 4 0 0 0 4 17Z"/>
+              <path fill="currentColor" d="M9 19a1 1 0 0 1-2 0a1 1 0 0 1 2 0Zm5 0a1 1 0 0 1-2 0a1 1 0 0 1 2 0Zm-3 2a1 1 0 0 1-2 0a1 1 0 0 1 2 0Zm5 2a1 1 0 0 1-2 0a1 1 0 0 1 2 0Z"/>
+            </svg>`,
+  눈: `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 36 36">
+		<path fill="#e1e8ed" d="M28 4c-.825 0-1.62.125-2.369.357A6.5 6.5 0 0 0 19.5 0c-3.044 0-5.592 2.096-6.299 4.921A4.46 4.46 0 0 0 10.5 4A4.5 4.5 0 0 0 6 8.5c0 .604.123 1.178.339 1.704A5 5 0 0 0 5 10c-2.762 0-5 2.238-5 5s2.238 5 5 5h23a8 8 0 1 0 0-16" />
+		<path fill="#5dadec" d="M6.53 26.75a.5.5 0 0 0-.683-.183L4 27.634V25.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867L2.499 28.5L.651 29.567a.5.5 0 0 0 .5.867L3 29.366V31.5a.5.5 0 0 0 1 0v-2.133l1.848 1.067a.5.5 0 1 0 .5-.867L4.5 28.5l1.848-1.067a.5.5 0 0 0 .182-.683m10 4a.5.5 0 0 0-.683-.183L14 31.634V29.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867l1.848 1.067l-1.848 1.067a.5.5 0 0 0 .5.867L13 33.366V35.5a.5.5 0 0 0 1 0v-2.133l1.848 1.067a.5.5 0 1 0 .5-.867L14.5 32.5l1.848-1.067a.5.5 0 0 0 .182-.683M11 27.5a.5.5 0 0 0 1 0v-2.133l1.848 1.067a.5.5 0 1 0 .5-.867L12.5 24.5l1.848-1.067a.501.501 0 0 0-.5-.867L12 23.634V21.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867l1.848 1.067l-1.848 1.067a.5.5 0 0 0 .5.867L11 25.366zm12.848-.066a.5.5 0 1 0 .5-.867L22.5 25.5l1.848-1.067a.501.501 0 0 0-.5-.867L22 24.634V22.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867l1.848 1.067l-1.848 1.067a.5.5 0 0 0 .5.867L21 26.366V28.5a.5.5 0 0 0 1 0v-2.133zm10.5-1.867L32.5 24.5l1.848-1.067a.501.501 0 0 0-.5-.867L32 23.634V21.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867l1.848 1.067l-1.848 1.067a.5.5 0 0 0 .5.867L31 25.366V27.5a.5.5 0 0 0 1 0v-2.133l1.848 1.067a.501.501 0 0 0 .5-.867M29.53 30.75a.5.5 0 0 0-.683-.183L27 31.634V29.5a.5.5 0 0 0-1 0v2.135l-1.849-1.067a.5.5 0 1 0-.5.867l1.848 1.067l-1.848 1.067a.5.5 0 0 0 .5.867L26 33.366V35.5a.5.5 0 0 0 1 0v-2.133l1.848 1.067a.5.5 0 1 0 .5-.867L27.5 32.5l1.848-1.067a.5.5 0 0 0 .182-.683" />
+	</svg>`,
+  소나기: `<svg style="color: #999999; xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 56 56">
+		<path fill="currentColor" d="M12.262 36.098h29.086c7.43 0 13.172-5.625 13.172-12.82c0-7.29-6-12.75-13.946-12.68c-3-6.047-8.507-9.54-15-9.54c-8.648 0-15.937 6.82-16.617 15.563c-4.547 1.242-7.477 5.063-7.477 9.68c0 5.812 4.36 9.797 10.782 9.797m19.265 11.226l3.047-5.273c.422-.727.188-1.547-.515-1.946c-.703-.421-1.5-.187-1.922.54l-3.094 5.32c-.375.68-.187 1.5.54 1.922a1.43 1.43 0 0 0 1.944-.563m5.438 6.703l6.914-12c.422-.703.21-1.5-.469-1.922c-.656-.398-1.5-.187-1.945.516l-6.867 11.953c-.399.727-.211 1.547.492 1.969c.68.375 1.476.164 1.875-.516m-24.094-6.68l3.047-5.273c.422-.726.211-1.547-.492-1.945c-.727-.422-1.524-.188-1.946.539l-3.07 5.32c-.398.68-.187 1.5.516 1.899a1.403 1.403 0 0 0 1.945-.54m5.438 6.704l6.937-12c.399-.703.188-1.5-.469-1.922a1.4 1.4 0 0 0-1.945.516l-6.89 11.953c-.399.726-.188 1.547.515 1.968c.68.375 1.477.164 1.852-.515" />
+	</svg>`,
+};
+
 const showModal = ref(false);
 const app_key = import.meta.env.VITE_KAKAOMAP_API_KEY;
 const loginStore = useLoginStore();
-
-const route = useRoute();
-const router = useRouter();
 
 const emit = defineEmits("close");
 
@@ -37,6 +149,7 @@ let ps = null;
 let map = null;
 let markers = [];
 const places = ref([]);
+const weather = ref({});
 const weatherIcon = ref(null);
 const keyword = ref("");
 const address = ref("검색해보세요");
@@ -85,21 +198,37 @@ onMounted(async () => {
         });
 
         // 현재 위치의 날씨 표시하기
-        // try {
-        //   let today = new Date();
-        //   const date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate(), time = (today.getHours() - (today.getMinutes() < 10 ? -1 : 0) < 0 ? 23 : today.getHours() - (today.getMinutes() < 10 ? -1 : 0)) + "00";
-        //   const response = await axios.get("/weather", {
-        //     params: {
-        //       date: date,
-        //       time: time,
-        //       nx: cur.coords.latitude,
-        //       ny: cur.coords.longitude
-        //     },
-        //   });
-        //   console.log(response.data);
-        // } catch (error) {
-        //   console.error("Weather API 호출 실패", error);
-        // }
+        try {
+          let today = new Date();
+          let date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate();
+          let time = (today.getHours() - (today.getMinutes() < 10 ? 1 : 0) < 0 ? 23 : today.getHours() - (today.getMinutes() < 10 ? 1 : 0));
+          if (time < 10) time = "0" + time;
+          time += "00";
+          const response = await axios.get("/weather", {
+            params: {
+              date: date,
+              time: time,
+              nx: cur.coords.latitude,
+              ny: cur.coords.longitude
+            }
+          });
+          weather.value = response.data;
+
+          // 아이콘 추가
+          console.log(weather.value.weatherStatus);
+          if (weather.value.weatherStatus) {
+            let weather_icon = weather.value.weatherStatus;
+            // 낮 밤 추가
+            if (weather.value.weatherStatus === "맑음") {
+              if (time >= "0600" && time <= "1800") weather_icon += "";
+              else weather_icon += " 밤";
+            }
+            weatherIcon.value.innerHTML = weatherIconMapping[weather_icon] || "";
+          }
+
+        } catch (error) {
+          console.error("Weather API 호출 실패", error);
+        }
 
         // 카테고리 검색용
         ps = new kakao.maps.services.Places(map);
@@ -110,15 +239,6 @@ onMounted(async () => {
     console.error("카카오맵 API 로딩 실패");
   };
   document.head.appendChild(script);
-
-  // 날씨정보 가져오기
-  if (weatherIcon.value) {
-    weatherIcon.value.style.transition = "transform 1s ease-out";
-    weatherIcon.value.style.transform = "translateY(-20px)";
-    setTimeout(() => {
-      weatherIcon.value.style.transform = "translateX(0)";
-    }, 100);
-  }
 });
 
 // 키워드로 장소 api 요청 부분
@@ -225,43 +345,15 @@ watch(
       </div>
       <div class="weather">
         <div class="weather-info">
-          <div class="weather-icon" ref="weatherIcon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
-              viewBox="0 0 24 24">
-              <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                <path fill="currentColor" fill-opacity="0" stroke-dasharray="36" stroke-dashoffset="36"
-                  d="M12 7c2.76 0 5 2.24 5 5c0 2.76 -2.24 5 -5 5c-2.76 0 -5 -2.24 -5 -5c0 -2.76 2.24 -5 5 -5">
-                  <animate fill="freeze" attributeName="fill-opacity" begin="1s" dur="0.5s" values="0;1" />
-                  <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="36;0" />
-                </path>
-                <path stroke-dasharray="2" stroke-dashoffset="2" d="M12 19v1M19 12h1M12 5v-1M5 12h-1" opacity="0">
-                  <animate fill="freeze" attributeName="d" begin="0.6s" dur="0.2s"
-                    values="M12 19v1M19 12h1M12 5v-1M5 12h-1;M12 21v1M21 12h1M12 3v-1M3 12h-1" />
-                  <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="2;0" />
-                  <set fill="freeze" attributeName="opacity" begin="0.6s" to="1" />
-                  <animateTransform attributeName="transform" dur="30s" repeatCount="indefinite" type="rotate"
-                    values="0 12 12;360 12 12" />
-                </path>
-                <path stroke-dasharray="2" stroke-dashoffset="2"
-                  d="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5" opacity="0">
-                  <animate fill="freeze" attributeName="d" begin="0.8s" dur="0.2s"
-                    values="M17 17l0.5 0.5M17 7l0.5 -0.5M7 7l-0.5 -0.5M7 17l-0.5 0.5;M18.5 18.5l0.5 0.5M18.5 5.5l0.5 -0.5M5.5 5.5l-0.5 -0.5M5.5 18.5l-0.5 0.5" />
-                  <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="2;0" />
-                  <set fill="freeze" attributeName="opacity" begin="0.8s" to="1" />
-                  <animateTransform attributeName="transform" dur="30s" repeatCount="indefinite" type="rotate"
-                    values="0 12 12;360 12 12" />
-                </path>
-              </g>
-            </svg>
-          </div>
+          <div class="weather-icon" ref="weatherIcon"></div>
           <div class="main-info">
-            <div class="temperature">7.4°</div>
-            <div class="weather-description">맑음</div>
+            <div class="temperature">{{ weather.temperature }}°</div>
+            <div class="weather-description">{{ weather.weatherStatus }}</div>
           </div>
         </div>
         <div class="additional-info">
-          <p>체감온도 <span>5.7°</span></p>
-          <p>미세 <span>좋음</span></p>
-          <p>초미세 <span>좋음</span></p>
+          <p>체감온도 <span>{{ weather.perceivedTemperature }}°</span></p>
+          <p>습도 <span>{{ weather.humidity }}</span></p>
         </div>
       </div>
       <div class="line">
@@ -368,7 +460,7 @@ watch(
             <li v-for="place in places">
             <div class="name" @click="getPlace(place)">{{ place.name }}</div>
             <div class="address">{{ place.address }}</div>
-            <button @click="attraction = place; showModal = true">추가</button>
+            <button v-if="loginStore.getId" @click="attraction = place; showModal = true">추가</button>
           </li>
           </template>
           <template v-else>
@@ -461,7 +553,6 @@ hr {
 }
 
 .weather .weather-icon {
-  color: #F2B758;
   width: 85px;
 }
 
