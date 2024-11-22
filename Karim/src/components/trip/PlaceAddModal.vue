@@ -30,11 +30,13 @@ const trips = ref({});
 
 onMounted(async () => {
   console.log(props.place);
-  try {
-    const response = await axios.get(`/plan/${loginStore.getId}`);
-    trips.value = response.data;
-  } catch (error) {
-    console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
+  if (loginStore.getId) {
+    try {
+      const response = await axios.get(`/plan/${loginStore.getId}`);
+      trips.value = response.data;
+    } catch (error) {
+      console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
+    }
   }
 });
 
