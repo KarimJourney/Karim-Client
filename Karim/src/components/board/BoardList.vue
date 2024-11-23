@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "@/utils/axios";
+import { useRoute, useRouter } from "vue-router";
 
 const posts = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref("");
+const router = useRouter();
 
 const fetchBoardList = async () => {
   // try {
@@ -50,7 +52,7 @@ onMounted(() => {
       <ul>
         <template v-if="posts.length">
           <li v-for="(post, index) in posts" :key="post.id" class="board-item">
-            <div class="board-card">
+            <div class="board-card" @click="router.push({name:'boarddetail', params: {id: post.id}})">
               <div class="board-thumbnail"><img :src="post.img"></div>
               <h3 class="board-title">{{ post.title }}</h3>
               <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회 | {{ post.upload_date }}</p>
