@@ -7,23 +7,31 @@ export const useLoginStore = defineStore("login", () => {
   const id = ref(""); // 사용자 ID
   const name = ref(""); // 사용자 이름/닉네임
   const profileImageUrl = ref(""); // 프로필 이미지 URL
+  const accessToken = ref("");
+  const refreshToken = ref("");
 
   // getters
   const getLogin = computed(() => isLogin.value);
   const getId = computed(() => id.value);
   const getName = computed(() => name.value);
   const getProfileImageUrl = computed(() => profileImageUrl.value);
+  const getAccessToken = computed(() => accessToken.value);
+  const getRefreshToken = computed(() => refreshToken.value);
 
   // actions
-  const setLogin = (flag, _id, _name, _profileImageUrl) => {
+  const setLogin = (flag, _id, _name, _profileImageUrl, _accessToken, _refreshToken) => {
     isLogin.value = flag;
     if (flag) {
       id.value = _id;
       name.value = _name;
       profileImageUrl.value = _profileImageUrl;
+      accessToken.value = _accessToken;
+      refreshToken.value = _refreshToken;
       localStorage.setItem("id", id.value);
       localStorage.setItem("name", name.value);
       localStorage.setItem("profileImageUrl", profileImageUrl.value);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
     } else {
       id.value = "";
       name.value = "";
@@ -31,6 +39,8 @@ export const useLoginStore = defineStore("login", () => {
       localStorage.removeItem("id");
       localStorage.removeItem("name");
       localStorage.removeItem("profileImageUrl");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     }
   };
 

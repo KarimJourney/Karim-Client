@@ -31,9 +31,8 @@ const getToken = async () => {
       console.log("Refresh Token:", refreshToken);
 
       // Pinia 스토어에 로그인 상태 설정
-      loginStore.setLogin(true, memberId, nickname, profileImageUrl);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      loginStore.setLogin(true, memberId, nickname, profileImageUrl, accessToken, refreshToken);
+      
 
       // HomeView로 이동
       router.push({
