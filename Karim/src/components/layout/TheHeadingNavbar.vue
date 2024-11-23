@@ -14,6 +14,8 @@ defineComponent({
   name: "MingcuteUser4Fill",
 });
 
+console.log(loginStore.getId);
+
 // 모달 상태 관리
 const showLoginModal = ref(false);
 const showJoinModal = ref(false);
@@ -66,7 +68,7 @@ const toggleUserMenu = () => {
                 <li @click="logout">로그아웃</li>
                 <li
                   @click="
-                    router.push({ name: 'mypage' });
+                    router.push({ name: 'profile', params: { id:loginStore.getId }});
                     showMenu = false;
                   "
                 >

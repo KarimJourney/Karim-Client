@@ -1,3 +1,43 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import PlanModal from "@/components/trip/TripModal.vue"; // 여행 계획을 추가하는 모달 컴포넌트
+import { useRoute, useRouter } from "vue-router";
+import axios from "@/utils/axios"; // axios 임포트
+import { useLoginStore } from "@/stores/login";
+
+const showModal = ref(false);
+const loginStore = useLoginStore();
+const route = useRoute();
+const router = useRouter();
+
+const member = ref({}); // 사용자 정보를 저장할 ref
+const plans = ref([]);
+const userId = route.params.id;
+
+// 컴포넌트가 마운트될 때 여행 계획 목록을 불러옵니다.
+onMounted(async () => {
+  try {
+    const response = await axios.get(`/member/${userId}`);
+    member.value = response.data;
+  } catch (error) {
+    console.error("회원 정보를 가져오는 데 실패했습니다.", error);
+    alert('존재하지 않는 사용자입니다.');
+    router.go(-1);
+  }
+  try {
+    const response = await axios.get(`/plan/${userId}`);
+    plans.value = response.data;
+  } catch (error) {
+    console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
+  }
+});
+
+// 여행 계획 상세 페이지로 이동
+const goToPlaceList = (planId) => {
+  router.push({ name: "place", params: { id: planId } }); // 여행 계획 ID를 URL 파라미터로 전달
+};
+</script>
+
 <template>
   <section>
     <div class="profile-container">
@@ -18,10 +58,10 @@
               >
                 내 정보 수정
               </button>
-            </template>
-            <button @click="showModal = true" class="add-plan">
+              <button @click="showModal = true" class="add-plan">
               새 여행 계획 추가
             </button>
+            </template>
           </div>
         </div>
       </div>
@@ -29,16 +69,21 @@
       <!-- 여행 계획 목록 -->
       <div class="trip-section">
         <ul>
-          <template v-if="plans.length">
-            <li v-for="(plan, index) in plans" :key="index" class="trip-item">
-              <a @click="goToPlaceList(plan.id)" class="trip-link">
-                <h3>{{ plan.name }}</h3>
-                <p>{{ plan.startDate }} ~ {{ plan.endDate }}</p>
-              </a>
-            </li>
+          <template v-if="userId === loginStore.getId">
+            <template v-if="plans.length">
+              <li v-for="(plan, index) in plans" :key="index" class="trip-item">
+                <a @click="goToPlaceList(plan.id)" class="trip-link">
+                  <h3>{{ plan.name }}</h3>
+                  <p>{{ plan.startDate }} ~ {{ plan.endDate }}</p>
+                </a>
+              </li>
+            </template>
+            <template v-else>
+              <li id="no_plan">여행 계획이 없습니다!</li>
+            </template>
           </template>
           <template v-else>
-            <li id="no_plan">여행 계획이 없습니다!</li>
+            <li>여행 계획 {{ plans.length }}개</li>
           </template>
         </ul>
       </div>
@@ -51,43 +96,6 @@
     />
   </section>
 </template>
-
-<script setup>
-import { ref, onMounted } from "vue";
-import PlanModal from "@/components/trip/TripModal.vue"; // 여행 계획을 추가하는 모달 컴포넌트
-import { useRouter } from "vue-router";
-import axios from "@/utils/axios"; // axios 임포트
-import { useLoginStore } from "@/stores/login";
-
-const showModal = ref(false);
-const loginStore = useLoginStore();
-
-const userId = loginStore.getId;
-const member = ref({}); // 사용자 정보를 저장할 ref
-const plans = ref([]);
-const router = useRouter();
-
-// 컴포넌트가 마운트될 때 여행 계획 목록을 불러옵니다.
-onMounted(async () => {
-  try {
-    const response = await axios.get(`/member/${userId}`);
-    member.value = response.data;
-  } catch (error) {
-    console.error("회원 정보를 가져오는 데 실패했습니다.", error);
-  }
-  try {
-    const response = await axios.get(`/plan/${userId}`);
-    plans.value = response.data;
-  } catch (error) {
-    console.error("여행 계획 목록을 가져오는 데 실패했습니다.", error);
-  }
-});
-
-// 여행 계획 상세 페이지로 이동
-const goToPlaceList = (planId) => {
-  router.push({ name: "place", params: { id: planId } }); // 여행 계획 ID를 URL 파라미터로 전달
-};
-</script>
 
 <style scoped>
 /* 전체 컨테이너 */

@@ -20,18 +20,18 @@ const router = createRouter({
       component: () => import("@/components/member/FindPwd.vue"),
     },
     {
-      path: "/me",
+      path: "/profile",
       name: "mypage",
       component: () => import("@/views/MyPageView.vue"),
       redirect: { name: "profile" },
       children: [
         {
-          path: "",
+          path: ":id",
           name: "profile",
-          component: () => import("@/components/member/MyPage.vue"),
+          component: () => import("@/components/member/Profile.vue"),
         },
         {
-          path: "/edit",
+          path: "edit",
           name: "memberedit",
           component: () => import("@/components/member/MemberEdit.vue"),
         },
@@ -65,17 +65,17 @@ const router = createRouter({
         },
         {
           path: "new",
-          name: "new",
+          name: "boardnew",
           component: () => import("@/components/board/BoardNew.vue"),
         },
         {
           path: "post/:id",
-          name: "detail",
+          name: "boarddetail",
           component: () => import("@/components/board/BoardDetail.vue"),
         },
         {
           path: "edit/:id",
-          name: "update",
+          name: "boardupdate",
           component: () => import("@/components/board/BoardUpdate.vue"),
         },
       ],
