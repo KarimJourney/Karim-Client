@@ -1,32 +1,24 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "@/utils/axios";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const posts = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref("");
 const router = useRouter();
+const image_base_url = import.meta.env.VITE_VUE_API_IMAGE_URL;
 
 const fetchBoardList = async () => {
-  // try {
-  //   const response = await axios.get("/board");
-  //   posts.value = response.data;
-  // } catch (error) {
-  //   console.error("게시판 데이터를 가져오는 데 실패했습니다.", error);
-  //   errorMessage.value = "데이터를 가져오는 중 오류가 발생했습니다.";
-  // } finally {
-  //   isLoading.value = false;
-  // }
-  posts.value = [
-    { id: 1, userId: 11, nickname: "닉네임1", title: "첫 번째 게시물", hit: 34, upload_date: "2024-11-22" },
-    { id: 2, userId: 12, nickname: "닉네임2", title: "두 번째 게시물", hit: 12, upload_date: "2024-11-21" },
-    { id: 3, userId: 13, nickname: "닉네임3", title: "세 번째 게시물", hit: 47, upload_date: "2024-11-20" },
-    { id: 4, userId: 14, nickname: "닉네임4", title: "네 번째 게시물", hit: 21, upload_date: "2024-11-19" },
-    { id: 5, userId: 15, nickname: "닉네임5", title: "다섯 번째 게시물", hit: 18, upload_date: "2024-11-18" },
-    { id: 6, userId: 16, nickname: "닉네임6", title: "여섯 번째 게시물", hit: 9, upload_date: "2024-11-17" },
-  ];
-  isLoading.value = false;
+  try {
+    const response = await axios.get("/board/list");
+    posts.value = response.data;
+  } catch (error) {
+    console.error("게시판 데이터를 가져오는 데 실패했습니다.", error);
+    errorMessage.value = "데이터를 가져오는 중 오류가 발생했습니다.";
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 onMounted(() => {
@@ -36,26 +28,35 @@ onMounted(() => {
 
 <template>
   <section>
-    <!-- <div class="board-header">
+    <!-- 게시판 헤더 -->
+    <div class="board-header">
       <h1>여행기</h1>
-    </div> -->
+      <button class="create-button" @click="router.push({ name: 'boardnew' })">
+        게시글 작성하기
+      </button>
+    </div>
 
+    <!-- 로딩 상태 -->
     <div v-if="isLoading" class="loading">
       데이터를 불러오는 중입니다...
     </div>
 
+    <!-- 에러 메시지 -->
     <div v-if="errorMessage" class="error">
       {{ errorMessage }}
     </div>
 
+    <!-- 게시글 리스트 -->
     <div v-else class="board-gallery">
       <ul>
         <template v-if="posts.length">
           <li v-for="(post, index) in posts" :key="post.id" class="board-item">
-            <div class="board-card" @click="router.push({name:'boarddetail', params: {id: post.id}})">
-              <div class="board-thumbnail"><img :src="post.img"></div>
+            <div class="board-card" @click="router.push({ name: 'boarddetail', params: { id: post.id } })">
+              <div class="board-thumbnail">
+                <img :src="`${image_base_url}/${post.files[0]?.saveFolder}/${post.files[0]?.saveFile}`" alt="게시글 이미지" />
+              </div>
               <h3 class="board-title">{{ post.title }}</h3>
-              <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회 | {{ post.upload_date }}</p>
+              <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회 | {{ post.uploadDate }}</p>
             </div>
           </li>
         </template>
@@ -77,8 +78,11 @@ section {
   border-radius: 12px;
 }
 
+/* 게시판 헤더 */
 .board-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 
@@ -86,6 +90,22 @@ section {
   font-size: 28px;
   font-weight: bold;
   color: #111827;
+}
+
+.create-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--white);
+  background-color: var(--navy);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-button:hover {
+  background-color: var(--navy);
 }
 
 /* 로딩 및 에러 */
@@ -122,6 +142,7 @@ section {
 .board-card {
   padding: 15px;
   text-align: center;
+  cursor: pointer;
 }
 
 .board-thumbnail {
@@ -130,6 +151,13 @@ section {
   background-color: #e5e7eb;
   border-radius: 8px;
   margin-bottom: 15px;
+}
+
+.board-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .board-title {

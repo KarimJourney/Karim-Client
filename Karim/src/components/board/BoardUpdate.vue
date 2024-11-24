@@ -1,100 +1,323 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import axios from "@/utils/axios";
+import { useRoute, useRouter } from "vue-router";
+import { useLoginStore } from "@/stores/login";
 
-const route = useRoute();
+const loginStore = useLoginStore();
+const title = ref("");
+const content = ref("");
+const uploadedFiles = ref([]); // 기존 + 새 파일 모두 포함
+const errorMessage = ref("");
 const router = useRouter();
-
+const route = useRoute();
+const image_base_url = import.meta.env.VITE_VUE_API_IMAGE_URL;
 const postId = route.params.id;
-const form = ref({});
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`/board/${postId}`, { id: postId });
-    console.log(response.data.data);
-    form.value = response.data.data;
+    const response = await axios.get(`/board/${postId}`);
+    title.value = response.data.title;
+    content.value = response.data.content;
+
+    // 기존 파일 정보를 uploadedFiles에 추가
+    uploadedFiles.value = response.data.files.map((file) => ({
+      url: `${image_base_url}/${file.saveFolder}/${file.saveFile}`, // 기존 파일의 URL
+      originalFile: file.originalFile, // 기존 파일 이름
+    }));
   } catch (error) {
     console.error("게시글을 가져오는 데 실패했습니다.", error);
   }
 });
 
-const update = async () => {
-  if (form.value.member_id) {
-    try {
-      const response = await axios.patch("/board/${postId}", form.value, {
-        headers: { "Content-Type": "application/json" }, // Content-Type을 명시
-      });
-      if (response.data.msg === "ok")
-        router.push({ name: "detail", params: { id: postId } });
-    } catch (error) {
-      console.error("질문을 수정하는 데 실패했습니다.", error);
+const handleFileChange = (event) => {
+  const files = Array.from(event.target.files);
+
+  // 새로 업로드된 파일을 추가
+  const newFiles = files.map((file) => ({
+    file, // 실제 파일 객체
+    url: URL.createObjectURL(file), // 미리보기 URL
+  }));
+
+  uploadedFiles.value = [...uploadedFiles.value, ...newFiles]; // 기존 파일 + 새 파일 병합
+};
+
+const removeFile = (index) => {
+  uploadedFiles.value.splice(index, 1); // 해당 파일 삭제
+};
+
+const convertUrlToBlob = async (url, originalFile) => {
+  const response = await fetch(url); // URL로 파일 데이터를 가져옴
+  const blob = await response.blob(); // Blob 객체 생성
+  return new File([blob], originalFile); // Blob을 File 객체로 변환
+};
+
+const submitPost = async () => {
+  if (!title.value.trim() || !content.value.trim()) {
+    errorMessage.value = "제목과 내용을 모두 입력해주세요.";
+    return;
+  }
+
+  const formData = new FormData();
+
+  // 게시글 데이터 추가
+  const boardData = {
+    id: postId,
+    userId: loginStore.getId,
+    title: title.value,
+    content: content.value,
+  };
+  formData.append("board", JSON.stringify(boardData));
+
+  try {
+    // 기존 파일을 Blob으로 변환하여 추가
+    for (const file of uploadedFiles.value) {
+      if (!file.file) {
+        // 기존 파일 처리
+        const blobFile = await convertUrlToBlob(file.url, file.originalFile);
+        formData.append("files", blobFile); // 기존 파일도 새 파일처럼 추가
+      } else {
+        // 새 파일 처리
+        formData.append("files", file.file);
+      }
     }
+
+    // 서버 요청
+    await axios.patch("/board/modify", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    router.push({ name: "boardlist" }); // 게시글 목록으로 이동
+  } catch (error) {
+    console.error("게시글 수정 실패", error);
+    errorMessage.value = "게시글 수정 중 오류가 발생했습니다.";
   }
 };
 </script>
 
+
 <template>
-  <div>
-    <h2>질문 수정</h2>
-    <form @submit.prevent="update" class="items">
-      <div class="item">
-        <input
-          name="title"
-          type="text"
-          v-model="form.title"
-          required
-          placeholder="제목을 입력하세요"
-        />
+  <section>
+    <!-- 헤더 -->
+    <div class="form-header">
+      <h1>게시글 수정</h1>
+    </div>
+
+    <!-- 폼 -->
+    <div class="form-container">
+      <!-- 제목 -->
+      <label for="title" class="form-label">제목</label>
+      <input
+        id="title"
+        type="text"
+        v-model="title"
+        class="form-input"
+        placeholder="제목을 입력하세요"
+      />
+
+      <!-- 내용 -->
+      <label for="content" class="form-label">내용</label>
+      <textarea
+        id="content"
+        v-model="content"
+        class="form-textarea"
+        placeholder="내용을 입력하세요"
+      ></textarea>
+
+      <!-- 파일 업로드 -->
+      <label for="images" class="form-label">이미지 업로드</label>
+      <input
+        id="images"
+        type="file"
+        multiple
+        accept="image/*"
+        @change="handleFileChange"
+        class="form-input-file"
+      />
+
+      <!-- 이미지 미리보기 -->
+      <div v-if="uploadedFiles.length" class="image-preview-container">
+        <div
+          v-for="(file, index) in uploadedFiles"
+          :key="index"
+          class="image-preview"
+        >
+          <img :src="file.url" alt="업로드 이미지 미리보기" />
+          <button class="remove-button" @click="removeFile(index)">×</button>
+        </div>
       </div>
 
-      <div class="item">
-        <textarea
-          name="content"
-          rows="15"
-          cols="30"
-          v-model="form.content"
-          placeholder="내용을 입력하세요"
-          required
-        >
-        </textarea>
-      </div>
+      <!-- 에러 메시지 -->
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-      <div class="btn">
-        <button type="submit">등록</button>
-        <button
-          type="button"
-          @click="router.push({ name: 'detail', params: { id: postId } })"
-        >
-          뒤로
+      <!-- 버튼 -->
+      <div class="form-actions">
+        <button class="cancel-button" @click="router.push({ name: 'boardlist' })">
+          취소
         </button>
+        <button class="submit-button" @click="submitPost">수정하기</button>
       </div>
-    </form>
-  </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.items {
-  width: 100%;
+section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* 헤더 스타일 */
+.form-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+/* 폼 컨테이너 */
+.form-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
-.item {
-  display: flex;
+/* 폼 요소 스타일 */
+.form-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #374151;
+}
+
+.form-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.form-textarea {
   width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--navy);
+  outline: none;
+}
+
+.form-textarea {
+  resize: none;
+  height: 150px;
+}
+
+.form-input-file {
+  border: none;
+  padding: 5px;
+}
+
+/* 이미지 미리보기 */
+.image-preview-container {
+  display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
 }
 
-.btn {
-  width: 100%;
+.remove-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  cursor: pointer;
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 30px;
+}
+
+.remove-button:hover {
+  background-color: rgba(255, 0, 0, 0.8);
+}
+
+.image-preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* 에러 메시지 */
+.error {
+  font-size: 14px;
+  color: #ef4444;
+  text-align: center;
+}
+
+/* 버튼 스타일 */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button {
+  background-color: #d1d5db;
+  color: #374151;
+}
+
+.cancel-button:hover {
+  background-color: #9ca3af;
+}
+
+.submit-button {
+  background-color: var(--navy);
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: var(--navy);
 }
 </style>

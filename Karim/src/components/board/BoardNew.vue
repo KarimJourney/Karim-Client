@@ -1,90 +1,254 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useLoginStore } from "@/stores/login";
 import axios from "@/utils/axios";
+import { useRouter } from "vue-router";
 
-const loginStore = useLoginStore();
+const title = ref("");
+const content = ref("");
+const uploadedFiles = ref([]);
+const errorMessage = ref("");
 const router = useRouter();
 
-const form = ref({
-  title: "",
-  content: "",
-  member_id: loginStore.getId,
-});
+const handleFileChange = (event) => {
+  const files = Array.from(event.target.files);
+  uploadedFiles.value = files.map((file) => ({
+    file,
+    url: URL.createObjectURL(file),
+  }));
+};
 
-const insert = async () => {
-  if (form.value.member_id) {
-    try {
-      const response = await axios.post("/board/new", form.value, {
-        headers: { "Content-Type": "application/json" }, // Content-Type을 명시
-      });
-      if (response.data.msg === "ok") router.push({ name: "board" });
-    } catch (error) {
-      console.error("질문을 추가하는 데 실패했습니다.", error);
-    }
+const submitPost = async () => {
+  if (!title.value.trim() || !content.value.trim()) {
+    errorMessage.value = "제목과 내용을 모두 입력해주세요.";
+    return;
+  }
+
+  const formData = new FormData();
+
+  // board 객체를 JSON 문자열로 변환 후 추가
+  const boardData = {
+    title: title.value,
+    content: content.value,
+  };
+  formData.append("board", JSON.stringify(boardData));
+
+  // 파일 추가
+  uploadedFiles.value.forEach(({ file }) => {
+    formData.append("files", file); // Key 이름은 서버에서 사용하는 이름과 일치해야 함
+  });
+
+  try {
+    await axios.post("/board/write", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    router.push({ name: "boardlist" }); // 게시글 목록 페이지로 이동
+  } catch (error) {
+    console.error("게시글 작성 실패", error);
+    errorMessage.value = "게시글 작성 중 오류가 발생했습니다.";
   }
 };
 </script>
 
+
 <template>
-  <div>
-    <h2>질문 쓰기</h2>
-    <form @submit.prevent="insert" class="items">
-      <div class="item">
-        <input
-          name="title"
-          type="text"
-          v-model="form.title"
-          required
-          placeholder="제목을 입력하세요"
-        />
-      </div>
+  <section>
+    <!-- 헤더 -->
+    <div class="form-header">
+      <h1>게시글 작성</h1>
+    </div>
 
-      <div class="item">
-        <textarea
-          name="content"
-          rows="15"
-          cols="30"
-          v-model="form.content"
-          placeholder="내용을 입력하세요"
-          required
+    <!-- 폼 -->
+    <div class="form-container">
+      <!-- 제목 -->
+      <label for="title" class="form-label">제목</label>
+      <input
+        id="title"
+        type="text"
+        v-model="title"
+        class="form-input"
+        placeholder="제목을 입력하세요"
+      />
+
+      <!-- 내용 -->
+      <label for="content" class="form-label">내용</label>
+      <textarea
+        id="content"
+        v-model="content"
+        class="form-textarea"
+        placeholder="내용을 입력하세요"
+      ></textarea>
+
+      <!-- 파일 업로드 -->
+      <label for="images" class="form-label">이미지 업로드</label>
+      <input
+        id="images"
+        type="file"
+        multiple
+        accept="image/*"
+        @change="handleFileChange"
+        class="form-input-file"
+      />
+
+      <!-- 이미지 미리보기 -->
+      <div v-if="uploadedFiles.length" class="image-preview-container">
+        <div
+          v-for="(file, index) in uploadedFiles"
+          :key="index"
+          class="image-preview"
         >
-        </textarea>
+          <img :src="file.url" alt="업로드 이미지 미리보기" />
+        </div>
       </div>
 
-      <div class="btn">
-        <button type="submit">등록</button>
-        <button type="button" @click="router.push({ name: 'board' })">
-          뒤로
+      <!-- 에러 메시지 -->
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+
+      <!-- 버튼 -->
+      <div class="form-actions">
+        <button class="cancel-button" @click="router.push({ name: 'boardlist' })">
+          취소
         </button>
+        <button class="submit-button" @click="submitPost">작성하기</button>
       </div>
-    </form>
-  </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.items {
-  width: 100%;
+section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* 헤더 스타일 */
+.form-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+/* 폼 컨테이너 */
+.form-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
-.item {
-  display: flex;
+/* 폼 요소 스타일 */
+.form-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #374151;
+}
+
+.form-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.form-textarea {
   width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--navy);
+  outline: none;
+}
+
+.form-textarea {
+  resize: none;
+  height: 150px;
+}
+
+.form-input-file {
+  border: none;
+  padding: 5px;
+}
+
+/* 이미지 미리보기 */
+.image-preview-container {
+  display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
 }
 
-.btn {
+.image-preview {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image-preview img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 에러 메시지 */
+.error {
+  font-size: 14px;
+  color: #ef4444;
+  text-align: center;
+}
+
+/* 버튼 스타일 */
+.form-actions {
   display: flex;
-  justify-content: center;
-  gap: 30px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button {
+  background-color: #d1d5db;
+  color: #374151;
+}
+
+.cancel-button:hover {
+  background-color: #9ca3af;
+}
+
+.submit-button {
+  background-color: var(--navy);
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: var(--navy);
 }
 </style>

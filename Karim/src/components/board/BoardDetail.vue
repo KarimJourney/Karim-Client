@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "@/stores/login";
 import axios from "@/utils/axios";
@@ -9,60 +9,83 @@ const route = useRoute();
 const router = useRouter();
 const postId = route.params.id;
 const post = ref({});
-const comments = ref([]); // 댓글 리스트 (아직 데이터 없음)
+const comments = ref([]);
+const newComment = ref("");
+const isEditingComment = ref(null);
+const editCommentContent = ref("");
+const image_base_url = import.meta.env.VITE_VUE_API_IMAGE_URL;
 
 onMounted(async () => {
-  // try {
-  //   const response = await axios.get(`/board/${postId}`, { id: postId });
-  //   post.value = response.data.data;
-  //   post.value.hit += 1;
-  //   try {
-  //     await axios.patch(`/board/hit/${postId}`, {
-  //       id: postId,
-  //       hit: post.value.hit,
-  //     });
-  //   } catch (error) {
-  //     console.error("조회수 업데이트에 실패했습니다.", error);
-  //   }
-  // } catch (error) {
-  //   console.error("게시글을 가져오는 데 실패했습니다.", error);
-  // }
-  post.value = {
-    id: 1,
-    userId: 11,
-    nickname: "닉네임1",
-    title: "첫 번째 게시물",
-    content: "이것은 게시글의 본문입니다.",
-    hit: 34,
-    upload_date: "2024-11-22",
-    img: "https://via.placeholder.com/600x300",
-  };
-  comments.value = [{
-    id: 1,
-    userId: 22,
-    nickname: "닉네임2",
-    content: "예뻐용"
-  },
-{
-  id:2,
-  userId:22,
-  nickname:"닉넴",
-  content:"ㄱㅊㄱㅊ"
-}]
+  try {
+    const response = await axios.get(`/board/${postId}`);
+    post.value = response.data;
+
+    const response2 = await axios.get(`/comment/list/${postId}`);
+    comments.value = response2.data;
+  } catch (error) {
+    console.error("게시글을 가져오는 데 실패했습니다.", error);
+  }
 });
 
 const goUpdate = () => {
-  router.push({ name: "update", params: { id: postId } });
+  router.push({ name: "boardupdate", params: { id: postId } });
 };
 
 const goDelete = async () => {
   const c = confirm("삭제하시겠습니까?");
   if (c) {
     try {
-      const response = await axios.delete(`/board/${postId}`, { id: postId });
-      if (response.data.msg === "ok") router.push({ name: "board" });
+      await axios.delete(`/board/delete/${postId}`);
+      router.push({ name: "board" });
     } catch (error) {
       console.error("게시글 삭제 실패했습니다.", error);
+    }
+  }
+};
+
+const submitComment = async () => {
+  if (!newComment.value.trim()) return;
+  try {
+    const response = await axios.post(`/comment/write`, {
+      boardId: postId,
+      userId: loginStore.getId,
+      content: newComment.value,
+    });
+    router.go(0);
+  } catch (error) {
+    console.error("댓글 작성 실패", error);
+  }
+};
+
+const startEditComment = (comment) => {
+  isEditingComment.value = comment.id;
+  editCommentContent.value = comment.content;
+};
+
+const saveEditComment = async (commentId) => {
+  try {
+    await axios.patch(`/comment/modify`, {
+      id: commentId,
+      userId: loginStore.getId,
+      content: editCommentContent.value,
+    });
+    const comment = comments.value.find((c) => c.id === commentId);
+    comment.content = editCommentContent.value;
+    isEditingComment.value = null;
+    editCommentContent.value = "";
+  } catch (error) {
+    console.error("댓글 수정 실패", error);
+  }
+};
+
+const deleteComment = async (commentId) => {
+  const c = confirm("댓글을 삭제하시겠습니까?");
+  if (c) {
+    try {
+      await axios.delete(`/comment/delete/${commentId}`);
+      comments.value = comments.value.filter((c) => c.id !== commentId);
+    } catch (error) {
+      console.error("댓글 삭제 실패", error);
     }
   }
 };
@@ -72,15 +95,30 @@ const goDelete = async () => {
   <div class="container">
     <!-- 게시글 영역 -->
     <div class="post-section">
-      <img v-if="post.img" :src="post.img" alt="게시글 이미지" class="post-image" />
+      <!-- 이미지 캐러셀 -->
+      <div v-if="post.files && post.files.length" class="carousel">
+        <div class="carousel-wrapper">
+          <button v-if="post.files.length > 1" class="carousel-button left" @click="post.files.unshift(post.files.pop())">
+            &#x276E;
+          </button>
+          <img
+            :src="`${image_base_url}/${post.files[0]?.saveFolder}/${post.files[0]?.saveFile}`"
+            alt="게시글 이미지"
+            class="carousel-image"
+          />
+          <button v-if="post.files.length > 1" class="carousel-button right" @click="post.files.push(post.files.shift())">
+            &#x276F;
+          </button>
+        </div>
+      </div>
       <h2 class="post-title">{{ post.title }}</h2>
       <p class="post-meta">
-        작성자: {{ post.nickname }} | 조회수: {{ post.hit }} | {{ post.upload_date }}
+        작성자: {{ post.nickname }} | 조회수: {{ post.hit }} | {{ post.uploadDate }}
       </p>
       <p class="post-content">{{ post.content }}</p>
       <div class="post-actions">
         <button @click="router.push({ name: 'boardlist' })">뒤로</button>
-        <template v-if="post.userId === loginStore.getId">
+        <template v-if="post.userId == loginStore.getId">
           <button @click="goUpdate">수정</button>
           <button @click="goDelete">삭제</button>
         </template>
@@ -92,11 +130,34 @@ const goDelete = async () => {
       <h3>댓글</h3>
       <ul class="comments-list">
         <li v-if="comments.length" v-for="(comment, index) in comments" :key="index" class="comment-item">
-          <p class="comment-author" @click="router.push({name:'profile', param: {id:'22'}})">{{ comment.nickname }}</p>
-          <p class="comment-content">{{ comment.content }}</p>
+          <div class="comment-header">
+            <p class="comment-author" @click="router.push({name:'profile', params: {id: comment.userId}})">
+              {{ comment.nickname }}
+            </p>
+            <div class="comment-actions" v-if="comment.userId == loginStore.getId">
+              <template v-if="isEditingComment === comment.id">
+                <button @click="saveEditComment(comment.id)">저장</button>
+                <button @click="isEditingComment = null">취소</button>
+              </template>
+              <template v-else>
+                <button @click="startEditComment(comment)">수정</button>
+                <button @click="deleteComment(comment.id)">삭제</button>
+              </template>
+            </div>
+          </div>
+          <template v-if="isEditingComment === comment.id">
+            <textarea v-model="editCommentContent" class="comment-edit-input"></textarea>
+          </template>
+          <template v-else>
+            <p class="comment-content">{{ comment.content }}</p>
+          </template>
         </li>
         <li v-else class="no-comments">아직 댓글이 없습니다!</li>
       </ul>
+      <div class="comment-form">
+        <textarea v-model="newComment" class="comment-input" placeholder="댓글을 작성하세요"></textarea>
+        <button @click="submitComment">댓글 작성</button>
+      </div>
     </div>
   </div>
 </template>
@@ -127,40 +188,48 @@ const goDelete = async () => {
   max-width: 40%;
 }
 
-.post-image {
-  width: 100%;
-  height: auto;
-  margin-bottom: 20px;
-  border-radius: 8px;
-}
-
-.post-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.post-meta {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 20px;
-}
-
-.post-content {
-  font-size: 16px;
-  color: #374151;
-  margin-bottom: 20px;
-}
-
 .post-actions {
   display: flex;
+  justify-content: flex-start;
   gap: 10px;
+  margin-top: 20px;
 }
 
-.comments-section h3 {
-  font-size: 20px;
-  font-weight: bold;
+.carousel {
+  position: relative;
   margin-bottom: 20px;
+}
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.carousel-button.left {
+  left: 10px;
+}
+
+.carousel-button.right {
+  right: 10px;
+}
+
+.carousel-image {
+  width: auto;
+  height: 40vh;
+  border-radius: 8px;
 }
 
 .comments-list {
@@ -170,26 +239,60 @@ const goDelete = async () => {
 }
 
 .comment-item {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   padding: 10px;
-  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
+  background-color: #f9fafb;
+  position: relative;
 }
 
-.comment-author {
-  font-weight: bold;
-  font-size: 14px;
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-actions button {
+  margin-left: 10px;
+  padding: 4px 8px;
+  color: var(--light-grey);
+  background-color: #f9fafb;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .comment-content {
+  margin-top: 10px;
   font-size: 14px;
-  color: #374151;
-  margin-top: 5px;
 }
 
-.no-comments {
-  color: #9ca3af;
-  font-style: italic;
-  text-align: center;
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.comment-edit-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.comment-item button {
+  background-color: #f9fafb;
 }
 </style>

@@ -30,8 +30,8 @@ export const useLoginStore = defineStore("login", () => {
       localStorage.setItem("id", id.value);
       localStorage.setItem("name", name.value);
       localStorage.setItem("profileImageUrl", profileImageUrl.value);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("accessToken", accessToken.value);
+      localStorage.setItem("refreshToken", refreshToken.value);
     } else {
       id.value = "";
       name.value = "";
