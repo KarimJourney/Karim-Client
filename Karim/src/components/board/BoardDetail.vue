@@ -115,7 +115,7 @@ const deleteComment = async (commentId) => {
       <p class="post-meta">
         작성자: {{ post.nickname }} | 조회수: {{ post.hit }} | {{ post.uploadDate }}
       </p>
-      <p class="post-content">{{ post.content }}</p>
+      <pre><p class="post-content">{{ post.content }}</p></pre>
       <div class="post-actions">
         <button @click="router.push({ name: 'boardlist' })">뒤로</button>
         <template v-if="post.userId == loginStore.getId">
@@ -149,7 +149,7 @@ const deleteComment = async (commentId) => {
             <textarea v-model="editCommentContent" class="comment-edit-input"></textarea>
           </template>
           <template v-else>
-            <p class="comment-content">{{ comment.content }}</p>
+            <pre><p class="comment-content">{{ comment.content }}</p></pre>
           </template>
         </li>
         <li v-else class="no-comments">아직 댓글이 없습니다!</li>
