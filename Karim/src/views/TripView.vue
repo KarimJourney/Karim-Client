@@ -16,11 +16,11 @@ let map = null;
 let markers = [];
 const plan = ref({}); 
 const places = ref([]); 
+const dates = ref([]);
 const placeLists = ref({});
 const isEditing = ref(false);
 
 onMounted(async () => {
-  const userId = loginStore.getId;
   const planId = route.params.id;
   try {
     const response = await axios.get(`/plan/detail/${planId}`);
@@ -57,7 +57,13 @@ onMounted(async () => {
   } catch (error) {
     console.error("여행 계획과 장소를 가져오는 데 실패했습니다.", error);
   }
-  
+  let currentDate = new Date(plan.value.startDate);
+  const endDate = new Date(plan.value.endDate);
+  while (currentDate <= endDate) {
+    dates.value.push(currentDate.toISOString().split('T')[0]);
+    currentDate.setDate(currentDate.getDate() + 1); 
+  }
+ 
 });
 
 
@@ -192,12 +198,12 @@ const editPlan = async (plan) => {
         </div>
         <template v-if="places.length > 0">
           <div class="place">
-            <template v-for="(place, date, index) in placeLists">
+            <template v-for="(date, index) in dates">
               <div>
                 <h3>Day {{ index + 1 }}</h3>
                 <h4 class="date">{{ date }}</h4>
                 <ul>
-                  <li v-for="(p, index) in place">
+                  <li v-for="(p, index) in placeLists[date]">
                     <div class="place-item" @click="getPlace(p)">
                       <h5>{{ index + 1 }}</h5>
                       <h4>{{ p.name }}</h4>
