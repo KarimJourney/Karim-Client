@@ -496,7 +496,6 @@ aside {
 
 .place-item h5 {
   font-size: 0.6em;
-  height: 1.4em;
   color: var(--white);
 }
 
