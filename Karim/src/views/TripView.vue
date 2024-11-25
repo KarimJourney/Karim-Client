@@ -14,8 +14,10 @@ const router = useRouter();
 
 let map = null;
 let markers = [];
+let lines = [];
 const plan = ref({}); 
 const places = ref([]); 
+const curDate = ref({});
 const dates = ref([]);
 const placeLists = ref({});
 const isEditing = ref(false);
@@ -25,6 +27,7 @@ onMounted(async () => {
   try {
     const response = await axios.get(`/plan/detail/${planId}`);
     plan.value = response.data.plan;
+    curDate.value = plan.value.startDate;
     places.value = response.data.places;
     placeLists.value = places.value.reduce((acc, curr) => {
       const { planDate } = curr;
@@ -32,7 +35,6 @@ onMounted(async () => {
       else acc[planDate] = [curr];
       return acc;
     }, {});
-    console.log(placeLists.value);
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&autoload=false`;
     script.onload = () => {
@@ -47,7 +49,8 @@ onMounted(async () => {
           level: 3,
         };
         map = new kakao.maps.Map(container, options);
-        addMarkers();
+        addMarkers(plan.value.startDate);
+        addLines(plan.value.startDate);
       });
     };
     script.onerror = () => {
@@ -63,60 +66,117 @@ onMounted(async () => {
     dates.value.push(currentDate.toISOString().split('T')[0]);
     currentDate.setDate(currentDate.getDate() + 1); 
   }
- 
 });
 
 
 // 마커 추가 함수
-const addMarkers = () => {
+const addMarkers = (date) => {
   if (!map) return;
 
   // 기존 마커 제거
   markers.forEach((marker) => marker.setMap(null));
   markers = [];
+  var index = 1;
 
-  places.value.forEach((place) => {
+  placeLists.value[date].forEach((place) => {
     if (!place.latitude || !place.longitude) {
       console.warn(`Trip ID ${place.name}의 좌표 정보가 누락되었습니다.`);
       return;
     }
 
     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-    const marker = new kakao.maps.Marker({
+    // const marker = new kakao.maps.Marker({
+    //   map: map,
+    //   position: position,
+    //   title: place.name,
+    // });
+
+    // markers.push(marker);
+
+    const content = `
+      <div class="marker-index">
+        <h5>${ index }</h5>
+      </div>
+    `;
+
+    const marker = new kakao.maps.CustomOverlay({
       map: map,
       position: position,
       title: place.name,
+      content: content,
     });
 
     markers.push(marker);
 
+    index++;
+
     // 마커 클릭 시 중심 이동
     kakao.maps.event.addListener(marker, "click", () => {
-      map.setCenter(position);
+      map.panTo(
+        position, {
+        animate: {
+          duration: 550
+        }
+      }
+      );
     });
   });
 
   // 첫 번째 좌표로 지도 이동
   if (
-    places.value.length > 0 &&
-    places.value[0].latitude &&
-    places.value[0].longitude
+    placeLists.value[date].length > 0 &&
+    placeLists.value[date][0].latitude &&
+    placeLists.value[date][0].longitude
   ) {
-    map.setCenter(
-      new kakao.maps.LatLng(places.value[0].latitude, places.value[0].longitude)
+    map.panTo(
+      new kakao.maps.LatLng(placeLists.value[date][0].latitude, placeLists.value[date][0].longitude), {
+          animate: {
+              duration: 550
+          }
+      }
     );
   }
 };
 
+const addLines = (date) => {
+  if (!map) return;
+
+  lines.forEach((line) => line.setMap(null));
+  lines = [];
+  let prev = null;
+
+  placeLists.value[date].forEach((place) => {
+    const position = new kakao.maps.LatLng(place.latitude, place.longitude);
+    if (prev != null) {
+      var line = new kakao.maps.Polyline({
+        path: [prev, position],
+        strokeWeight: 3,
+        strokeColor: 'black',
+        strokeOpacity: 0.7,
+        strokeStyle: 'dash'
+      });
+      line.setMap(map);
+      lines.push(line);
+    }
+    prev = position;
+  });
+};
+
 const getPlace = (place) => {
   const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-  map.setCenter(position);
+  map.panTo(position, {
+    animate: {
+      duration: 550
+    }
+  }
+  );
 }
 
 watch(
-  () => places.value, // places 배열이 바뀔 때마다 마커 갱신
-  () => {
-    addMarkers();
+  () => curDate.value,
+  (date) => {
+    addMarkers(date);
+    addLines(date);
   },
   { immediate: true }
 );
@@ -200,11 +260,11 @@ const editPlan = async (plan) => {
           <div class="place">
             <template v-for="(date, index) in dates">
               <div>
-                <h3>Day {{ index + 1 }}</h3>
+                <h3 @click="curDate = date">Day {{ index + 1 }}</h3>
                 <h4 class="date">{{ date }}</h4>
                 <ul>
                   <li v-for="(p, index) in placeLists[date]">
-                    <div class="place-item" @click="getPlace(p)">
+                    <div class="place-item" @click="curDate = date; getPlace(p)">
                       <div class="place-index">
                         <h5>{{ index + 1 }}</h5>
                       </div>
@@ -335,6 +395,7 @@ aside {
   font-size: 1em;
   color: var(--navy);
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .place h4 {
@@ -468,5 +529,4 @@ aside {
   width: 100%;
   height: 100%;
 }
-
 </style>

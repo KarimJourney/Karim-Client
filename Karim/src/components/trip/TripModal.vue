@@ -21,6 +21,7 @@ defineProps({
 const emit = defineEmits(["close", "addPlan"]);
 
 const loginStore = useLoginStore();
+const minDate = ref("1970-01-01");
 
 const form = ref({
   userId: loginStore.getId,
@@ -91,6 +92,7 @@ const handleSubmit = async () => {
               type="date"
               placeholder="시작 날짜"
               v-model="form.startDate"
+              @change="minDate = form.startDate"
               required
             />
           </div>
@@ -104,6 +106,7 @@ const handleSubmit = async () => {
               placeholder="종료 날짜"
               v-model="form.endDate"
               required
+              :min="minDate"
             />
           </div>
 

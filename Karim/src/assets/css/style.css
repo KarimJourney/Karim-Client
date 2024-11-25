@@ -194,3 +194,25 @@ option:hover {
 	display: flex;
 	flex-direction: column;
 }
+
+/* marker */
+.marker-index {
+	background-color: var(--navy);
+	width: 10px; 
+	height: 10px; 
+	border-radius: 50%; 
+	padding: 10px; 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+	transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .marker-index h5 {
+	font-size: 0.8em; /* 기존 0.6em에서 키움 */
+	color: white; /* 텍스트 색상 */
+	margin: 0; /* 여백 제거 */
+	line-height: 1; /* 텍스트 중앙 정렬 */
+	background-color: var(--navy); /* 배경색 변경 */
+  }
