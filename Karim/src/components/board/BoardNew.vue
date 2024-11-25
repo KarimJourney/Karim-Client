@@ -19,6 +19,10 @@ const handleFileChange = (event) => {
   }));
 };
 
+const removeFile = (index) => {
+  uploadedFiles.value.splice(index, 1); // 해당 파일 삭제
+};
+
 const submitPost = async () => {
   if (!title.value.trim() || !content.value.trim()) {
     errorMessage.value = "제목과 내용을 모두 입력해주세요.";
@@ -103,6 +107,7 @@ const submitPost = async () => {
           class="image-preview"
         >
           <img :src="file.url" alt="업로드 이미지 미리보기" />
+          <button class="remove-button" @click="removeFile(index)">×</button>
         </div>
       </div>
 
@@ -199,6 +204,7 @@ section {
 }
 
 .image-preview {
+  position: relative;
   width: 100px;
   height: 100px;
   border: 1px solid #d1d5db;
@@ -210,6 +216,27 @@ section {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.remove-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-button:hover {
+  background-color: rgba(255, 0, 0, 0.8);
 }
 
 /* 에러 메시지 */
