@@ -191,7 +191,8 @@ const editPlan = async (plan) => {
           <span v-show="!isEditing" @click="isEditing = true">수정</span>
           <span v-show="isEditing" @click="updatePlace">완료</span>
         </div>
-        <div class="place">
+        <template v-if="placeLists.length">
+          <div class="place">
           <template v-for="(place, date, index) in placeLists">
           <div>
             <h3>Day {{ index + 1 }}</h3>
@@ -225,6 +226,10 @@ const editPlan = async (plan) => {
           </div>
         </template>
         </div>
+        </template>
+        <template v-else>
+          <button @click="router.push({name:'map'})" class="button-find-place">장소 찾기</button>
+        </template>
       </div>
     </aside>
     <div class="map-wrapper">
@@ -399,6 +404,11 @@ aside {
 .place-item .input-cost:focus {
   border-color: var(--navy);
   outline: none;
+}
+
+.button-find-place {
+  background-color: var(--navy);
+  color: var(--white);
 }
 
 /* 버튼 스타일 */
