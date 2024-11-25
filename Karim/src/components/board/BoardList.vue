@@ -30,7 +30,7 @@ onMounted(() => {
   <section>
     <!-- 게시판 헤더 -->
     <div class="board-header">
-      <h1>여행기</h1>
+      <!-- <h1>여행기</h1> -->
       <button class="create-button" @click="router.push({ name: 'boardnew' })">
         게시글 작성하기
       </button>

@@ -2,12 +2,14 @@
 import { ref } from "vue";
 import axios from "@/utils/axios";
 import { useRouter } from "vue-router";
+import { useLoginStore } from "@/stores/login";
 
 const title = ref("");
 const content = ref("");
 const uploadedFiles = ref([]);
 const errorMessage = ref("");
 const router = useRouter();
+const loginStore = useLoginStore();
 
 const handleFileChange = (event) => {
   const files = Array.from(event.target.files);
@@ -27,6 +29,7 @@ const submitPost = async () => {
 
   // board 객체를 JSON 문자열로 변환 후 추가
   const boardData = {
+    userId: loginStore.getId,
     title: title.value,
     content: content.value,
   };

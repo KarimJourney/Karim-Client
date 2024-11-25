@@ -148,6 +148,7 @@ const emit = defineEmits("close");
 let ps = null;
 let map = null;
 let markers = [];
+let position = null;
 const places = ref([]);
 const weather = ref({});
 const weatherIcon = ref(null);
@@ -175,7 +176,7 @@ onMounted(async () => {
         console.error("#map 요소를 찾을 수 없습니다.");
         return;
       }
-      const position = new kakao.maps.LatLng(latitude, longitude);
+      position = new kakao.maps.LatLng(latitude, longitude);
       const options = {
         center: position, // 초기 중심 좌표
         level: 3, // 확대 레벨

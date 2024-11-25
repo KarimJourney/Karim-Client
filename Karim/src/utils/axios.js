@@ -34,6 +34,8 @@ API.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
+      console.log(error.response.status);
+      console.log(originalRequest);
       // Refresh Token으로 새로운 Access Token 발급
       try {
         const refreshToken = localStorage.getItem("refreshToken");
@@ -62,7 +64,14 @@ API.interceptors.response.use(
         localStorage.removeItem("refreshToken");
 
         // Vue Router를 사용해 홈으로 이동
-        router.push({ name: "home" }); // Router 인스턴스 사용
+        try {
+          console.log("Attempting to redirect to home...");
+          await router.push({ name: "home" });
+          console.log("Redirected to home");
+        } catch (redirectError) {
+          console.error("Error during redirect", redirectError);
+        }
+        
         return Promise.reject(refreshError);
       }
     }

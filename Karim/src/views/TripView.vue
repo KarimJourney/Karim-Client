@@ -23,7 +23,7 @@ onMounted(async () => {
   const userId = loginStore.getId;
   const planId = route.params.id;
   try {
-    const response = await axios.get(`/plan/detail/${userId}/${planId}`);
+    const response = await axios.get(`/plan/detail/${planId}`);
     plan.value = response.data.plan;
     places.value = response.data.places;
     placeLists.value = places.value.reduce((acc, curr) => {
