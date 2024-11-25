@@ -182,11 +182,17 @@ onMounted(async () => {
         level: 3, // 확대 레벨
       };
       map = new kakao.maps.Map(container, options); // 지도 생성
-      const marker = new kakao.maps.Marker({
+      const content = `
+        <div class="marker-index">
+          <h5>1</h5>
+        </div>
+      `;
+      const marker = new kakao.maps.CustomOverlay({
         map: map,
         position: position,
+        content: content,
       });
-      marker.setMap(map);
+
       markers.push(marker);
 
       // 현재 위치로 지역 정보 표시하기
@@ -290,6 +296,7 @@ const addMarkers = () => {
   if (!map) return;
   markers.forEach((marker) => marker.setMap(null));
   markers = [];
+  var index = 1;
 
   places.value.forEach((place) => {
     if (!place.latitude || !place.longitude) {
@@ -298,17 +305,31 @@ const addMarkers = () => {
     }
 
     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-    const marker = new kakao.maps.Marker({
+    const content = `
+      <div class="marker-index">
+        <h5>${ index }</h5>
+      </div>
+    `;
+
+    const marker = new kakao.maps.CustomOverlay({
       map: map,
       position: position,
       title: place.name,
+      content: content,
     });
 
-    marker.setMap(map);
     markers.push(marker);
 
+    index++;
+
     kakao.maps.event.addListener(marker, "click", () => {
-      map.setCenter(position);
+      map.panTo(
+        position, {
+        animate: {
+          duration: 550
+        }
+      }
+      );
     });
   });
 
@@ -317,15 +338,24 @@ const addMarkers = () => {
     places.value[0].latitude &&
     places.value[0].longitude
   ) {
-    map.setCenter(
-      new kakao.maps.LatLng(places.value[0].latitude, places.value[0].longitude)
+    map.panTo(
+      new kakao.maps.LatLng(places.value[0].latitude, places.value[0].longitude), {
+          animate: {
+              duration: 550
+          }
+      }
     );
   }
 };
 
 const getPlace = (place) => {
   const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-  map.setCenter(position);
+  map.panTo(position, {
+    animate: {
+      duration: 550
+    }
+  }
+  );
 }
 
 watch(
@@ -476,7 +506,8 @@ watch(
       <div class="result">
         <ul>
           <template v-if="places.length">
-            <li v-for="place in places">
+            <li v-for="(place, index) in places">
+              <h5>{{ index + 1 }}</h5>
               <div class="name" @click="getPlace(place)">{{ place.name }}</div>
               <div class="address">{{ place.address }}</div>
               <button v-if="loginStore.getId" @click="attraction = place; showModal = true">추가</button>
