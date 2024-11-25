@@ -233,6 +233,18 @@ const deleteComment = async (commentId) => {
   object-fit: cover;
 }
 
+.post-title {
+  color: var(--dark-grey);
+}
+
+.post-content {
+  color: var(--black);
+}
+
+.comments-section h3 {
+  margin-bottom: 20px;
+}
+
 .comments-list {
   list-style: none;
   padding: 0;
@@ -252,6 +264,10 @@ const deleteComment = async (commentId) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.comment-author {
+  color: var(--black);
 }
 
 .comment-actions button {
