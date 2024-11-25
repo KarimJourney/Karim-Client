@@ -78,6 +78,8 @@ const addMarkers = (date) => {
   markers = [];
   var index = 1;
 
+  if (!placeLists.value[date]) return;
+
   placeLists.value[date].forEach((place) => {
     if (!place.latitude || !place.longitude) {
       console.warn(`Trip ID ${place.name}의 좌표 정보가 누락되었습니다.`);
@@ -145,6 +147,8 @@ const addLines = (date) => {
   lines = [];
   let prev = null;
 
+  if (!placeLists.value[date]) return;
+  
   placeLists.value[date].forEach((place) => {
     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
     if (prev != null) {
