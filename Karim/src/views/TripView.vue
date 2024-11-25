@@ -205,7 +205,9 @@ const editPlan = async (plan) => {
                 <ul>
                   <li v-for="(p, index) in placeLists[date]">
                     <div class="place-item" @click="getPlace(p)">
-                      <h5>{{ index + 1 }}</h5>
+                      <div class="place-index">
+                        <h5>{{ index + 1 }}</h5>
+                      </div>
                       <h4>{{ p.name }}</h4>
                       <template v-if="!isEditing">
                         <h6 v-if="p.cost">\ {{ p.cost.toLocaleString() }}</h6>
@@ -285,7 +287,7 @@ aside {
 }
 
 #info h2 {
-  font-size: 1.8em;
+  font-size: 1.5em;
   color: var(--black);
 }
 
@@ -297,12 +299,12 @@ aside {
 }
 
 #info h4 {
-  font-size: 1.2em;
+  font-size: 0.9em;
   color: #495057;
 }
 
 #info .content {
-  font-size: 1em;
+  font-size: 0.8em;
   color: #6c757d;
 }
 
@@ -312,6 +314,7 @@ aside {
   justify-content: end;
   text-align: right;
   cursor: pointer;
+  font-size: 0.8em;
 }
 
 .items {
@@ -319,7 +322,6 @@ aside {
   flex-direction: column;
   align-items: center;
   width: 90%;
-  gap: 15px;
   height: calc(100vh - 85px);
 }
 
@@ -330,13 +332,13 @@ aside {
 }
 
 .place h3 {
-  font-size: 1.4em;
+  font-size: 1em;
   color: var(--navy);
   margin-bottom: 10px;
 }
 
 .place h4 {
-  font-size: 1.2em;
+  font-size: 0.9em;
   color: var(--grey);
   margin-bottom: 10px;
 }
@@ -347,17 +349,16 @@ aside {
 }
 
 .place li {
-  background-color: #ffffff;
+  background-color: #f1f5f9;
   padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border-left: 3px solid var(--navy);
   transition: background-color 0.3s;
 }
 
-.place li:hover {
-  background-color: #f1f5f9;
+.place li:last-child {
+  margin-bottom: 10px;
 }
+
 
 .place-item {
   position: relative;
@@ -366,16 +367,27 @@ aside {
 }
 
 .place-item h4 {
-  font-size: 1.2em;
-  color: var(--navy);
+  font-size: 1em;
+  color: var(--black);
   margin-bottom: 5px;
 }
 
-.place-item h5,
-.place-item h6 {
-  font-size: 1em;
-  color: #6c757d;
-  margin-bottom: 10px;
+.place-index {
+  background-color: var(--navy);
+  width: 1em;
+  height: 1em;
+  border-radius: 100%;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.place-item h5 {
+  font-size: 0.6em;
+  height: 1.4em;
+  color: var(--white);
 }
 
 .place-item .input-cost {
