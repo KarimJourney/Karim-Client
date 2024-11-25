@@ -19,6 +19,7 @@ const plan = ref({});
 const places = ref([]); 
 const curDate = ref({});
 const dates = ref([]);
+const distances = ref({});
 const placeLists = ref({});
 const isEditing = ref(false);
 
@@ -51,6 +52,7 @@ onMounted(async () => {
         map = new kakao.maps.Map(container, options);
         addMarkers(plan.value.startDate);
         addLines(plan.value.startDate);
+        calcDistances();
       });
     };
     script.onerror = () => {
@@ -166,6 +168,21 @@ const addLines = (date) => {
   });
 };
 
+const calcDistances = () => {
+  // distances.value = {};
+  // dates.value.forEach((date) => {
+  //   distances.push({date: []});
+  //   let plat = null, plong = null;
+  //   placeLists.value[date].forEach((place) => {
+  //     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
+  //     if (plat != null && plong != null) {
+  //       var dist = getDistance(plat, plong, place.latitude, place.longitude);
+  //       distances[date].push = {val: dist};
+  //     }
+  //   });
+  // })
+}
+
 const getPlace = (place) => {
   const position = new kakao.maps.LatLng(place.latitude, place.longitude);
   map.panTo(position, {
@@ -181,6 +198,7 @@ watch(
   (date) => {
     addMarkers(date);
     addLines(date);
+    calcDistances();
   },
   { immediate: true }
 );
@@ -268,6 +286,7 @@ const editPlan = async (plan) => {
                 <h4 class="date">{{ date }}</h4>
                 <ul>
                   <li v-for="(p, index) in placeLists[date]">
+                    <!-- <div class="distance">{{ distances[date][val] }}m</div> -->
                     <div class="place-item" @click="curDate = date; getPlace(p)">
                       <div class="place-index">
                         <h5>{{ index + 1 }}</h5>
@@ -414,16 +433,34 @@ aside {
 }
 
 .place li {
+  position: relative;
   background-color: #f1f5f9;
   padding: 15px;
   border-left: 3px solid var(--navy);
   transition: background-color 0.3s;
 }
 
+.place li .distance {
+  position: absolute;
+  background-color: var(--white);
+  width: 40px;
+  height: 20px;
+  color: var(--black);
+  left: 0;
+  bottom: 0;
+  transform: translate(-10%, 30%);
+  z-index: 10;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
 .place li:last-child {
   margin-bottom: 10px;
 }
 
+.place li:last-child .distance {
+  display: none;
+}
 
 .place-item {
   position: relative;
