@@ -174,7 +174,6 @@ const editPlan = async (plan) => {
   }
 };
 </script>
-
 <template>
   <section>
     <aside>
@@ -182,8 +181,8 @@ const editPlan = async (plan) => {
       <div class="items">
         <div id="info">
           <h2>{{ plan.name }}&nbsp;<span @click="showModal = true">
-            편집
-          </span></h2>
+              편집
+            </span></h2>
           <h4>{{ plan.startDate }} - {{ plan.endDate }}</h4>
           <h5 class="content"><span v-if="plan.cost">\{{ plan.cost.toLocaleString() }}</span><br>{{ plan.content }}</h5>
         </div>
@@ -191,44 +190,46 @@ const editPlan = async (plan) => {
           <span v-show="!isEditing" @click="isEditing = true">수정</span>
           <span v-show="isEditing" @click="updatePlace">완료</span>
         </div>
-        <template v-if="placeLists.length">
+        <template v-if="places.length > 0">
           <div class="place">
-          <template v-for="(place, date, index) in placeLists">
-          <div>
-            <h3>Day {{ index + 1 }}</h3>
-            <h4 class="date">{{ date }}</h4>
-            <ul>
-              <li v-for="(p, index) in place">
-                <div class="place-item" @click="getPlace(p)">
-                  <h5>{{ index + 1 }}</h5>
-                  <h4>{{ p.name }}</h4>
-                  <template v-if="!isEditing">
-                    <h6 v-if="p.cost">\ {{ p.cost.toLocaleString() }}</h6>
-                    <h5 v-if="p.content">{{ p.content }}</h5>
-                  </template>
-                  <template v-else>
-                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                      viewBox="0 0 576 512">
-                      <path fill="currentColor"
-                        d="M564 192c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-48l18.6-80.6c1.7-7.5-4-14.7-11.7-14.7h-46.1c-5.7 0-10.6 4-11.7 9.5L450.7 128H340.8l-19.7-86c-1.3-5.5-6.1-9.3-11.7-9.3h-44c-5.6 0-10.4 3.8-11.7 9.3l-20 86H125l-17.5-85.7c-1.1-5.6-6.1-9.6-11.8-9.6H53.6c-7.7 0-13.4 7.1-11.7 14.6L60 128H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h62.3l7.2 32H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h83.9l40.9 182.6c1.2 5.5 6.1 9.4 11.7 9.4h56.8c5.6 0 10.4-3.9 11.7-9.3L259.3 288h55.1l42.4 182.7c1.3 5.4 6.1 9.3 11.7 9.3h56.8c5.6 0 10.4-3.9 11.7-9.3L479.1 288H564c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-70.1l7.4-32zM183.8 342c-6.2 25.8-6.8 47.2-7.3 47.2h-1.1s-1.7-22-6.8-47.2l-11-54h38.8zm27.5-118h-66.8l-6.5-32h80.8zm62.9 0l2-8.6c1.9-8 3.5-16 4.8-23.4h11.8c1.3 7.4 2.9 15.4 4.8 23.4l2 8.6zm130.9 118c-5.1 25.2-6.8 47.2-6.8 47.2h-1.1c-.6 0-1.1-21.4-7.3-47.2l-12.4-54h39.1zm25.2-118h-67.4l-7.3-32h81.6z" />
-                    </svg></span>
-                    <input class="input-cost" type="number" v-model="placeLists[date][index].cost" placeholder="비용 입력">
-                    <textarea rows="5" v-model="placeLists[date][index].content" style="overflow: hidden;" placeholder="이곳은 어땠나요? 자유롭게 이야기해주세요!"></textarea>
-                  </template>
-                  <div class="btn" v-if="isEditing">
-                    <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
-                    <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
-                    <button @click="deletePlace(p, index)">삭제</button>
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <template v-for="(place, date, index) in placeLists">
+              <div>
+                <h3>Day {{ index + 1 }}</h3>
+                <h4 class="date">{{ date }}</h4>
+                <ul>
+                  <li v-for="(p, index) in place">
+                    <div class="place-item" @click="getPlace(p)">
+                      <h5>{{ index + 1 }}</h5>
+                      <h4>{{ p.name }}</h4>
+                      <template v-if="!isEditing">
+                        <h6 v-if="p.cost">\ {{ p.cost.toLocaleString() }}</h6>
+                        <h5 v-if="p.content">{{ p.content }}</h5>
+                      </template>
+                      <template v-else>
+                        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                            viewBox="0 0 576 512">
+                            <path fill="currentColor"
+                              d="M564 192c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-48l18.6-80.6c1.7-7.5-4-14.7-11.7-14.7h-46.1c-5.7 0-10.6 4-11.7 9.5L450.7 128H340.8l-19.7-86c-1.3-5.5-6.1-9.3-11.7-9.3h-44c-5.6 0-10.4 3.8-11.7 9.3l-20 86H125l-17.5-85.7c-1.1-5.6-6.1-9.6-11.8-9.6H53.6c-7.7 0-13.4 7.1-11.7 14.6L60 128H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h62.3l7.2 32H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h83.9l40.9 182.6c1.2 5.5 6.1 9.4 11.7 9.4h56.8c5.6 0 10.4-3.9 11.7-9.3L259.3 288h55.1l42.4 182.7c1.3 5.4 6.1 9.3 11.7 9.3h56.8c5.6 0 10.4-3.9 11.7-9.3L479.1 288H564c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-70.1l7.4-32zM183.8 342c-6.2 25.8-6.8 47.2-7.3 47.2h-1.1s-1.7-22-6.8-47.2l-11-54h38.8zm27.5-118h-66.8l-6.5-32h80.8zm62.9 0l2-8.6c1.9-8 3.5-16 4.8-23.4h11.8c1.3 7.4 2.9 15.4 4.8 23.4l2 8.6zm130.9 118c-5.1 25.2-6.8 47.2-6.8 47.2h-1.1c-.6 0-1.1-21.4-7.3-47.2l-12.4-54h39.1zm25.2-118h-67.4l-7.3-32h81.6z" />
+                          </svg></span>
+                        <input class="input-cost" type="number" v-model="placeLists[date][index].cost"
+                          placeholder="비용 입력">
+                        <textarea rows="5" v-model="placeLists[date][index].content" style="overflow: hidden;"
+                          placeholder="이곳은 어땠나요? 자유롭게 이야기해주세요!"></textarea>
+                      </template>
+                      <div class="btn" v-if="isEditing">
+                        <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
+                        <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
+                        <button @click="deletePlace(p, index)">삭제</button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </template>
           </div>
         </template>
-        </div>
-        </template>
         <template v-else>
-          <button @click="router.push({name:'map'})" class="button-find-place">장소 찾기</button>
+          <button @click="router.push({ name: 'map' })" class="button-find-place">장소 찾기</button>
         </template>
       </div>
     </aside>
@@ -236,13 +237,8 @@ const editPlan = async (plan) => {
       <div id="map"></div>
     </div>
 
-    <TripEditModal
-      v-if="showModal"
-      :showModal="showModal"
-      :trip="plan"
-      @close="showModal = false"
-      @editPlan="editPlan"
-    />
+    <TripEditModal v-if="showModal" :showModal="showModal" :trip="plan" @close="showModal = false"
+      @editPlan="editPlan" />
   </section>
 </template>
 
