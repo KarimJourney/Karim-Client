@@ -74,14 +74,14 @@ const toggleUserMenu = () => {
                 >
                   내 정보
                 </li>
-                <li
+                <!-- <li
                   @click="
                     router.push({ name: 'hotplace' });
                     showMenu = false;
                   "
                 >
                   즐겨찾기
-                </li>
+                </li> -->
               </div>
             </template>
           </ul>
