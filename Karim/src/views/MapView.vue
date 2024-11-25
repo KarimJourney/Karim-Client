@@ -361,7 +361,7 @@ watch(
         </div>
         <div class="additional-info">
           <p>체감온도 <span>{{ weather.perceivedTemperature }}°</span></p>
-          <p>습도 <span>{{ weather.humidity }}</span></p>
+          <p>습도 <span>{{ weather.humidity }}%</span></p>
         </div>
       </div>
       <div class="line">
