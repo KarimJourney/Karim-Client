@@ -87,8 +87,8 @@ export default {
         },
       ],
       isLoading: false, // 로딩 상태 추가
-      latitude: 36.0,
-      longitude: 127.0,
+      latitude: 37.554678, // 기본 위치 서울역
+      longitude: 126.970606,
     };
   },
   methods: {
@@ -182,10 +182,10 @@ export default {
   },
   mounted() {
     const self = this;
-  navigator.geolocation.getCurrentPosition(function(cur) {
-    self.latitude = cur.coords.latitude;
-    self.longitude = cur.coords.longitude;
-  });
+    navigator.geolocation.getCurrentPosition(function(cur) {
+      self.latitude = cur.coords.latitude;
+      self.longitude = cur.coords.longitude;
+    });
   },
 };
 </script>
