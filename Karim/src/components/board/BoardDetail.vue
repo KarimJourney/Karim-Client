@@ -227,9 +227,10 @@ const deleteComment = async (commentId) => {
 }
 
 .carousel-image {
-  width: auto;
+  width: 40vw;
   height: 40vh;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .comments-list {

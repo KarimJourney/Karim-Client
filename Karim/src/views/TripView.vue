@@ -184,8 +184,8 @@ const editPlan = async (plan) => {
           <h2>{{ plan.name }}&nbsp;<span @click="showModal = true">
             편집
           </span></h2>
-          <h4>{{ plan.startDate }} - {{ plan.endDate }}<span v-if="plan.cost">, \ {{ plan.cost }}</span></h4>
-          <h5 class="content">{{ plan.content }}</h5>
+          <h4>{{ plan.startDate }} - {{ plan.endDate }}</h4>
+          <h5 class="content"><span v-if="plan.cost">\{{ plan.cost.toLocaleString() }}</span><br>{{ plan.content }}</h5>
         </div>
         <div id="edit">
           <span v-show="!isEditing" @click="isEditing = true">수정</span>
@@ -202,7 +202,7 @@ const editPlan = async (plan) => {
                   <h5>{{ index + 1 }}</h5>
                   <h4>{{ p.name }}</h4>
                   <template v-if="!isEditing">
-                    <h6 v-if="p.cost">{{ p.cost }}</h6>
+                    <h6 v-if="p.cost">\ {{ p.cost.toLocaleString() }}</h6>
                     <h5 v-if="p.content">{{ p.content }}</h5>
                   </template>
                   <template v-else>

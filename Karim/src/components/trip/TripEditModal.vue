@@ -23,9 +23,10 @@ const router = useRouter();
 // 여행 계획 삭제 처리
 const deletePlan = async () => {
     try {
-      const response = await axios.delete(`/plan/${loginStore.getId}/${props.plan.id}`);
+      console.log(props.trip.id);
+      const response = await axios.delete(`/plan/${props.trip.id}`);
       emit("close");
-      router.push({name:'mypage'});
+      router.push({ name: "profile", params: {id: loginStore.getId} });
     } catch (error) {
       console.error("여행 계획을 삭제하는 데 실패했습니다.", error);
     }

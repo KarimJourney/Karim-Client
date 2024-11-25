@@ -53,10 +53,15 @@ onMounted(() => {
           <li v-for="(post, index) in posts" :key="post.id" class="board-item">
             <div class="board-card" @click="router.push({ name: 'boarddetail', params: { id: post.id } })">
               <div class="board-thumbnail">
-                <img :src="`${image_base_url}/${post.files[0]?.saveFolder}/${post.files[0]?.saveFile}`" alt="게시글 이미지" />
+                <template v-if="post.files[0]?.saveFolder">
+                  <img :src="`${image_base_url}/${post.files[0]?.saveFolder}/${post.files[0]?.saveFile}`" alt="게시글 이미지" />
+                </template>
+                <template v-else>
+                  <img src="/src/assets/img/no-image.png" alt="게시글 이미지" />
+                </template>
               </div>
               <h3 class="board-title">{{ post.title }}</h3>
-              <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회 | {{ post.uploadDate }}</p>
+              <p class="board-meta">{{ post.nickname }} | 조회수 {{ post.hit }}회<br>{{ post.uploadDate }}</p>
             </div>
           </li>
         </template>
