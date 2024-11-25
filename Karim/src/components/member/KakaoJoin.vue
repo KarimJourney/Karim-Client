@@ -10,9 +10,7 @@ const loginStore = useLoginStore(); // Pinia 스토어 인스턴스
 
 const getToken = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/member/kakaologin/${code.value}`
-    );
+    const response = await axios.get(`/member/kakaologin/${code.value}`);
     console.log(response);
 
     // message가 "로그인"인지 확인
