@@ -31,11 +31,10 @@ const handleModify = async () => {
     await axios.patch(
       "/member/modify",
       { id: member.value.id, nickname: member.value.nickname }, // 닉네임만 서버로 전송
-      { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
     );
     alert("수정되었습니다.");
-    loginStore.setLogin(true, loginStore.getId, member.value.nickname); // 로그인 정보 업데이트
-    router.push({ name: "mypage" }); // 수정 후 마이페이지로 이동
+    loginStore.setName(member.value.nickname); // 로그인 정보 업데이트
+    router.push({ name: "profile", params: {id: member.value.id} }); // 수정 후 마이페이지로 이동
   } catch (error) {
     console.error("수정 중 오류 발생:", error);
     alert("수정하는 중 오류가 발생했습니다.");

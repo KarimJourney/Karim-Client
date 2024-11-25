@@ -69,7 +69,7 @@ const goToPlaceList = (planId) => {
       <!-- 여행 계획 목록 -->
       <div class="trip-section">
         <ul>
-          <template v-if="userId === loginStore.getId">
+          <template v-if="userId == loginStore.getId">
             <template v-if="plans.length">
               <li v-for="(plan, index) in plans" :key="index" class="trip-item">
                 <a @click="goToPlaceList(plan.id)" class="trip-link">

@@ -19,6 +19,11 @@ export const useLoginStore = defineStore("login", () => {
   const getRefreshToken = computed(() => refreshToken.value);
 
   // actions
+  const setName = (_name) => {
+    name.value = _name;
+    localStorage.setItem("name", name.value);
+  }
+
   const setLogin = (flag, _id, _name, _profileImageUrl, _accessToken, _refreshToken) => {
     isLogin.value = flag;
     if (flag) {
@@ -69,6 +74,7 @@ export const useLoginStore = defineStore("login", () => {
     getId,
     getName,
     getProfileImageUrl,
+    setName,
     setLogin,
   };
 });
