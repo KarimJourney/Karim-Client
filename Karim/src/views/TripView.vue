@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import axios from "@/utils/axios";
 import { useLoginStore } from "@/stores/login";
 import TripEditModal from "@/components/trip/TripEditModal.vue";
+import { getDistance } from "geolib";
 
 const showModal = ref(false);
 const app_key = import.meta.env.VITE_KAKAOMAP_API_KEY;
@@ -52,7 +53,6 @@ onMounted(async () => {
         map = new kakao.maps.Map(container, options);
         addMarkers(plan.value.startDate);
         addLines(plan.value.startDate);
-        calcDistances();
       });
     };
     script.onerror = () => {
@@ -68,6 +68,7 @@ onMounted(async () => {
     dates.value.push(currentDate.toISOString().split('T')[0]);
     currentDate.setDate(currentDate.getDate() + 1); 
   }
+  calcDistances();
 });
 
 
@@ -89,13 +90,6 @@ const addMarkers = (date) => {
     }
 
     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-    // const marker = new kakao.maps.Marker({
-    //   map: map,
-    //   position: position,
-    //   title: place.name,
-    // });
-
-    // markers.push(marker);
 
     const content = `
       <div class="marker-index">
@@ -169,19 +163,27 @@ const addLines = (date) => {
 };
 
 const calcDistances = () => {
-  // distances.value = {};
-  // dates.value.forEach((date) => {
-  //   distances.push({date: []});
-  //   let plat = null, plong = null;
-  //   placeLists.value[date].forEach((place) => {
-  //     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
-  //     if (plat != null && plong != null) {
-  //       var dist = getDistance(plat, plong, place.latitude, place.longitude);
-  //       distances[date].push = {val: dist};
-  //     }
-  //   });
-  // })
-}
+  distances.value = [];
+  dates.value.forEach((date) => {
+    distances.value[date] = [];
+    let prevLat = null, prevLng = null;
+    if (placeLists.value[date]) {
+      placeLists.value[date].forEach((place, index) => {
+      if (prevLat !== null && prevLng !== null) {
+        const dist = getDistance(
+          { latitude: prevLat, longitude: prevLng }, // 서울
+          { latitude: place.latitude, longitude: place.longitude }  // 부산
+        );
+        distances.value[date].push(dist);
+        console.log(distances.value[date][index - 1]);
+      }
+      prevLat = place.latitude;
+      prevLng = place.longitude;
+    });
+    }
+  });
+};
+
 
 const getPlace = (place) => {
   const position = new kakao.maps.LatLng(place.latitude, place.longitude);
@@ -261,6 +263,10 @@ const editPlan = async (plan) => {
     console.error("여행 계획을 수정하는 데 실패했습니다.", error);
   }
 };
+
+const moveMap = (date, index) => {
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${placeLists.value[date][index].name}&destination=${placeLists.value[date][index+1].name}&travelmode=transit`);
+}
 </script>
 <template>
   <section>
@@ -286,7 +292,7 @@ const editPlan = async (plan) => {
                 <h4 class="date">{{ date }}</h4>
                 <ul>
                   <li v-for="(p, index) in placeLists[date]">
-                    <!-- <div class="distance">{{ distances[date][val] }}m</div> -->
+                    <div class="distance" @click="moveMap(date, index)">{{ distances[date][index] }}m</div>
                     <div class="place-item" @click="curDate = date; getPlace(p)">
                       <div class="place-index">
                         <h5>{{ index + 1 }}</h5>
@@ -443,8 +449,9 @@ aside {
 .place li .distance {
   position: absolute;
   background-color: var(--white);
-  width: 40px;
-  height: 20px;
+  font-size: 0.6em;
+  width: fit-content;
+  padding: 3px 5px;
   color: var(--black);
   left: 0;
   bottom: 0;
@@ -452,6 +459,7 @@ aside {
   z-index: 10;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
+  cursor: pointer;
 }
 
 .place li:last-child {
