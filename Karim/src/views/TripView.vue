@@ -226,7 +226,7 @@ const editPlan = async (plan) => {
                       </template>
                       <div class="btn" v-if="isEditing">
                         <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
-                        <button @click="movePlaceDown(index, date)" :disabled="index === place.length - 1">아래로</button>
+                        <button @click="movePlaceDown(index, date)" :disabled="index === placeLists[date].length - 1">아래로</button>
                         <button @click="deletePlace(p, index)">삭제</button>
                       </div>
                     </div>
@@ -401,8 +401,8 @@ aside {
 
 .place-item .icon {
   position: absolute;
-  top: 25.5%;
-  left: 7px;
+  top: 23%;
+  left: 3%;
 }
 
 .place-item textarea {
