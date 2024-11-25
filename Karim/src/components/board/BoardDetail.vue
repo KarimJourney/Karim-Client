@@ -115,7 +115,7 @@ const deleteComment = async (commentId) => {
       <p class="post-meta">
         작성자: {{ post.nickname }} | 조회수: {{ post.hit }} | {{ post.uploadDate }}
       </p>
-      <pre><p class="post-content">{{ post.content }}</p></pre>
+      <p class="post-content">{{ post.content }}</p> <!-- 수정 부분 -->
       <div class="post-actions">
         <button @click="router.push({ name: 'boardlist' })">뒤로</button>
         <template v-if="post.userId == loginStore.getId">
@@ -149,7 +149,7 @@ const deleteComment = async (commentId) => {
             <textarea v-model="editCommentContent" class="comment-edit-input"></textarea>
           </template>
           <template v-else>
-            <pre><p class="comment-content">{{ comment.content }}</p></pre>
+            <p class="comment-content">{{ comment.content }}</p> <!-- 수정 부분 -->
           </template>
         </li>
         <li v-else class="no-comments">아직 댓글이 없습니다!</li>
@@ -239,6 +239,8 @@ const deleteComment = async (commentId) => {
 
 .post-content {
   color: var(--black);
+  white-space: pre-wrap; /* 줄바꿈 및 공백을 유지하면서, 너비에 맞춰 자동 줄바꿈 */
+  word-wrap: break-word;
 }
 
 .comments-section h3 {
@@ -284,6 +286,8 @@ const deleteComment = async (commentId) => {
 .comment-content {
   margin-top: 10px;
   font-size: 14px;
+  white-space: pre-wrap; /* 댓글 내용도 줄바꿈을 유지하면서 자동으로 줄바꿈 처리 */
+  word-wrap: break-word;
 }
 
 .comment-form {
