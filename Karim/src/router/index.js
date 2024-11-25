@@ -38,11 +38,6 @@ const router = createRouter({
       ],
     },
     {
-      path: "/hotplace",
-      name: "hotplace",
-      component: () => import("@/views/HotplaceView.vue"),
-    },
-    {
       path: "/map",
       name: "map",
       component: () => import("@/views/MapView.vue"),
