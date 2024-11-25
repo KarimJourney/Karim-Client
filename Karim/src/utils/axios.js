@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from "@/router"; // Router 인스턴스를 가져옴
+import { useLoginStore } from "@/stores/login"; // LoginStore import
 
 const API = axios.create({
   baseURL: `${import.meta.env.VITE_VUE_API_URL}`, // 환경에 맞게 수정
@@ -34,8 +35,6 @@ API.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      console.log(error.response.status);
-      console.log(originalRequest);
       // Refresh Token으로 새로운 Access Token 발급
       try {
         const refreshToken = localStorage.getItem("refreshToken");
@@ -50,31 +49,28 @@ API.interceptors.response.use(
         const newAccessToken = response.data.accessToken;
         localStorage.setItem("accessToken", newAccessToken);
 
+        console.log("Response:", response); 
         // 원래의 요청을 새로운 Access Token으로 다시 실행
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return API(originalRequest);
       } catch (refreshError) {
         console.error("Refresh token expired or invalid", refreshError);
 
-        // 로그아웃 처리
-        localStorage.removeItem("id");
-        localStorage.removeItem("name");
-        localStorage.removeItem("profileImageUrl");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        // LoginStore의 상태를 갱신하여 로그인 상태를 'false'로 변경
+        const loginStore = useLoginStore(); // store 인스턴스를 가져옴
+        loginStore.setLogin(false, "", "", "", "", "");
 
         // Vue Router를 사용해 홈으로 이동
-        try {
-          console.log("Attempting to redirect to home...");
-          await router.push({ name: "home" });
-          console.log("Redirected to home");
-        } catch (redirectError) {
-          console.error("Error during redirect", redirectError);
-        }
-        
+        await router.push({ name: "home" });
         return Promise.reject(refreshError);
       }
     }
+
+    // LoginStore의 상태를 갱신하여 로그인 상태를 'false'로 변경
+    const loginStore = useLoginStore(); // store 인스턴스를 가져옴
+    loginStore.setLogin(false, "", "", "", "", "");
+
+    await router.push({ name: "home" });
     return Promise.reject(error);
   }
 );
