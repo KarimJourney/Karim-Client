@@ -26,7 +26,6 @@ const trips = ref({});
 const router = useRouter();
 
 onMounted(async () => {
-  console.log(props.place);
   if (loginStore.getId) {
     try {
       const response = await axios.get(`/plan/${loginStore.getId}`);
@@ -38,7 +37,6 @@ onMounted(async () => {
 });
 
 const addPlace = async () => {
-  console.log(selectedTrip.value, selectedDate.value);
   try {
     const data = {
       planId: selectedTrip.value.id,
@@ -49,7 +47,6 @@ const addPlace = async () => {
       longitude: props.place.longitude,
       planDate: selectedDate.value,
     };
-    console.log(data.attrId);
     await axios.post(`/plan/detail/${selectedTrip.value.id}`, data);
     if (confirm("장소가 추가되었습니다. 계획 목록으로 이동하시겠습니까?")) {
       closeModal();

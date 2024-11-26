@@ -195,6 +195,7 @@ onMounted(async () => {
       });
 
       markers.push(marker);
+      map.setCenter(position);
 
       // 현재 위치로 지역 정보 표시하기
       var geocoder = new kakao.maps.services.Geocoder();
@@ -239,7 +240,6 @@ onMounted(async () => {
     weather.value = response.data;
 
     // 아이콘 추가
-    console.log(weather.value.weatherStatus);
     if (weather.value.weatherStatus) {
       let weather_icon = weather.value.weatherStatus;
       // 낮 밤 추가
