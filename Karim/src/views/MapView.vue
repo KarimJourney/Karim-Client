@@ -142,6 +142,7 @@ const weatherIconMapping = {
 const showModal = ref(false);
 const app_key = import.meta.env.VITE_KAKAOMAP_API_KEY;
 const loginStore = useLoginStore();
+const router = useRouter();
 
 const emit = defineEmits("close");
 
@@ -153,14 +154,14 @@ const places = ref([]);
 const weather = ref({});
 const weatherIcon = ref(null);
 const keyword = ref("");
-const address = ref("검색해보세요");
+const address = ref("");
 const result_msg = ref("카테고리를 선택하면 주변 정보가 보여집니다.");
 
-onMounted(async () => {
-  // 기본 위치는 서울역 아니고 유성연수원
-  // let latitude = 37.554678, longitude = 126.970606;
-  let latitude = 36.354946759143, longitude = 127.29980994578;
+// 기본 위치는 서울역 아니고 유성연수원
+// let latitude = 37.554678, longitude = 126.970606;
+let latitude = 36.354946759143, longitude = 127.29980994578;
 
+onMounted(() => {
   // 현재 위치를 지도 첫 시작점으로 잡기
   navigator.geolocation.getCurrentPosition((cur) => {
     latitude = cur.coords.latitude;
@@ -169,7 +170,7 @@ onMounted(async () => {
 
   // 카카오맵 로딩
   const script = document.createElement("script");
-  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&libraries=services&autoload=false`;
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&libraries=services&autoload=false&v=1`;
   script.onload = () => {
     kakao.maps.load(() => {
       const container = document.getElementById("map"); // 맵을 표시할 div
@@ -179,10 +180,10 @@ onMounted(async () => {
       }
       position = new kakao.maps.LatLng(latitude, longitude);
       const options = {
-        center: position, // 초기 중심 좌표
-        level: 3, // 확대 레벨
+        center: position, 
+        level: 3,
       };
-      map = new kakao.maps.Map(container, options); // 지도 생성
+      map = new kakao.maps.Map(container, options);
       const content = `
         <div class="marker-index">
           <h5>1</h5>
@@ -195,10 +196,10 @@ onMounted(async () => {
       });
 
       markers.push(marker);
-      map.setCenter(position);
 
       // 현재 위치로 지역 정보 표시하기
-      var geocoder = new kakao.maps.services.Geocoder();
+      if (!(kakao.maps && kakao.maps.services)) return;
+      let geocoder = new kakao.maps.services.Geocoder();
       geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function (result, status) {
         if (status === kakao.maps.services.Status.OK) {
           for (var i = 0; i < result.length; i++) {
@@ -207,9 +208,6 @@ onMounted(async () => {
               break;
             }
           }
-        }
-        else {
-          address.value = "검색해보세요";
         }
       });
 
@@ -221,7 +219,10 @@ onMounted(async () => {
     console.error("카카오맵 API 로딩 실패");
   };
   document.head.appendChild(script);
+  getWeather();
+});
 
+const getWeather = async () => {
   // 현재 위치의 날씨 표시하기
   try {
     let today = new Date();
@@ -253,7 +254,7 @@ onMounted(async () => {
   } catch (error) {
     console.error("Weather API 호출 실패", error);
   }
-});
+}
 
 // 키워드로 장소 api 요청 부분
 const search = (keyword) => {
