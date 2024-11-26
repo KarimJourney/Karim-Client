@@ -34,7 +34,7 @@ onMounted(async () => {
 
 // 여행 계획 상세 페이지로 이동
 const goToPlaceList = (planId) => {
-  router.push({ name: "place", params: { id: planId } }); // 여행 계획 ID를 URL 파라미터로 전달
+  router.push({ name: "place", params: { id: planId }, meta: {userId: userId} }); // 여행 계획 ID를 URL 파라미터로 전달
 };
 </script>
 

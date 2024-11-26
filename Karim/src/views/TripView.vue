@@ -212,6 +212,9 @@ const movePlaceUp = (index, date) => {
     placeLists.value[date].splice(index, 1);
     placeLists.value[date].splice(index - 1, 0, temp);
   }
+  addMarkers(date);
+  addLines(date);
+  calcDistances(date);
 };
 
 const movePlaceDown = (index, date) => {
@@ -220,11 +223,13 @@ const movePlaceDown = (index, date) => {
     placeLists.value[date].splice(index, 1);
     placeLists.value[date].splice(index + 1, 0, temp);
   }
+  addMarkers(date);
+  addLines(date);
+  calcDistances(date);
 };
 
 const updatePlace = async () => {
   try {
-    console.log(places.value);
     const keys = Object.keys(placeLists.value);
     places.value = [];
     for (var i = 0; i < keys.length; i++) {
@@ -232,7 +237,6 @@ const updatePlace = async () => {
       for (var j = 0; j < keys2.length; j++) {
         places.value.push(placeLists.value[keys[i]][keys2[j]]);
       }
-      console.log(places.value);
     }
     const response = await axios.put(`/plan/detail/${route.params.id}`, {data: places.value});
     isEditing.value = false;
@@ -240,6 +244,16 @@ const updatePlace = async () => {
     console.error("장소 순서 업데이트 실패:", error);
   }
 };
+
+watch(
+  () => placeLists.value,
+  (date) => {
+    addMarkers(date);
+    addLines(date);
+    calcDistances();
+  },
+  { immediate: true }
+);
 
 // 장소 삭제
 const deletePlace = async (place, index) => {
@@ -271,7 +285,7 @@ const moveMap = (date, index) => {
 <template>
   <section>
     <aside>
-      <span id="close" @click="router.push({ name: 'mypage' })">X</span>
+      <span id="close" @click="router.go(-1)">X</span>
       <div class="items">
         <div id="info">
           <h2>{{ plan.name }}&nbsp;<span @click="showModal = true">
@@ -294,7 +308,8 @@ const moveMap = (date, index) => {
                   <li v-for="(p, index) in placeLists[date]">
                     <div class="distance" @click="moveMap(date, index)">{{ distances[date][index] }}m</div>
                     <div class="place-item" @click="curDate = date; getPlace(p)">
-                      <div class="place-index">
+                      <div>
+                        <div class="place-index">
                         <h5>{{ index + 1 }}</h5>
                       </div>
                       <h4>{{ p.name }}</h4>
@@ -311,12 +326,13 @@ const moveMap = (date, index) => {
                         <input class="input-cost" type="number" v-model="placeLists[date][index].cost"
                           placeholder="비용 입력">
                         <textarea rows="5" v-model="placeLists[date][index].content" style="overflow: hidden;"
-                          placeholder="이곳은 어땠나요? 자유롭게 이야기해주세요!"></textarea>
+                          placeholder="설명 입력"></textarea>
                       </template>
+                      <a v-show="isEditing" @click="deletePlace(p, index)">삭제</a>
+                      </div>
                       <div class="btn" v-if="isEditing">
-                        <button @click="movePlaceUp(index, date)" :disabled="index === 0">위로</button>
-                        <button @click="movePlaceDown(index, date)" :disabled="index === placeLists[date].length - 1">아래로</button>
-                        <button @click="deletePlace(p, index)">삭제</button>
+                        <button @click="movePlaceUp(index, date)" :disabled="index === 0">^</button>
+                        <button @click="movePlaceDown(index, date)" :disabled="index === placeLists[date].length - 1">˅</button>
                       </div>
                     </div>
                   </li>
@@ -473,7 +489,7 @@ aside {
 .place-item {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .place-item h4 {
@@ -510,7 +526,7 @@ aside {
 
 .place-item .icon {
   position: absolute;
-  top: 23%;
+  top: 25.5%;
   left: 3%;
 }
 
@@ -537,34 +553,39 @@ aside {
 /* 버튼 스타일 */
 .btn {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 5px;
+  margin-left: 10px;
+  height: 50%;
+  transform: translateY(130%);
 }
 
 .btn button {
-  padding: 8px 12px;
+  padding: 5px;
   font-size: 0.9em;
-  color: #ffffff;
+  color: var(--white);
   background-color: var(--navy);
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.btn button:nth-child(3) {
-  background-color: #c9302c;
-}
-
 .btn button:disabled {
-  background-color: #6c757d;
+  background-color: var(--grey);
   cursor: not-allowed;
 }
 
 .btn button:hover:not(:disabled) {
-  background-color: #003366;
+  color: var(--black);
+  background-color: var(--white);
 }
 
-.btn button:nth-child(3):hover:not(:disabled) {
-  background-color: #ac2925;
+.place-item a {
+  color: var(--light-grey);
+  text-decoration: underline;
+  font-size: 0.8em;
+  float: right;
+  transform: translateX(120%);
 }
 
 /* 지도 영역 스타일 */
