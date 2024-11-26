@@ -196,8 +196,7 @@ onMounted(() => {
       });
 
       markers.push(marker);
-      
-      console.log(kakao.maps.services);
+      ;
       // 현재 위치로 지역 정보 표시하기
       if (!(kakao.maps && kakao.maps.services)) return;
       let geocoder = new kakao.maps.services.Geocoder();
