@@ -174,7 +174,7 @@ const calcDistances = () => {
           { latitude: prevLat, longitude: prevLng }, // 서울
           { latitude: place.latitude, longitude: place.longitude }  // 부산
         );
-        if (dist >= 1000) distances.value[date].push((dist / 1000) + "km");
+        if (dist >= 1000) distances.value[date].push((dist / 1000).toFixed(1) + "km");
         else distances.value[date].push(dist + "m");
       }
       prevLat = place.latitude;
