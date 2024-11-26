@@ -2,11 +2,13 @@
 import { ref, onMounted } from "vue";
 import axios from "@/utils/axios";
 import { useRouter } from "vue-router";
+import { useLoginStore } from "@/stores/login";
 
 const posts = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref("");
 const router = useRouter();
+const loginStore = useLoginStore();
 const image_base_url = import.meta.env.VITE_VUE_API_IMAGE_URL;
 
 const fetchBoardList = async () => {
@@ -31,7 +33,7 @@ onMounted(() => {
     <!-- 게시판 헤더 -->
     <div class="board-header">
       <!-- <h1>여행기</h1> -->
-      <button class="create-button" @click="router.push({ name: 'boardnew' })">
+      <button v-if="loginStore.getId" class="create-button" @click="router.push({ name: 'boardnew' })">
         게시글 작성하기
       </button>
     </div>
