@@ -174,8 +174,8 @@ const calcDistances = () => {
           { latitude: prevLat, longitude: prevLng }, // 서울
           { latitude: place.latitude, longitude: place.longitude }  // 부산
         );
-        distances.value[date].push(dist);
-        console.log(distances.value[date][index - 1]);
+        if (dist >= 1000) distances.value[date].push((dist / 1000) + "km");
+        else distances.value[date].push(dist + "m");
       }
       prevLat = place.latitude;
       prevLng = place.longitude;
@@ -307,7 +307,7 @@ const moveMap = (date, index) => {
                 <h4 class="date">{{ date }}</h4>
                 <ul>
                   <li v-for="(p, index) in placeLists[date]">
-                    <div class="distance" @click="moveMap(date, index)">{{ distances[date][index] }}m</div>
+                    <div class="distance" @click="moveMap(date, index)">{{ distances[date][index] }}</div>
                     <div class="place-item" @click="curDate = date; getPlace(p)">
                       <div>
                         <div class="place-index">
