@@ -48,9 +48,10 @@ const addPlace = async () => {
       planDate: selectedDate.value,
     };
     await axios.post(`/plan/detail/${selectedTrip.value.id}`, data);
-    if (confirm("장소가 추가되었습니다. 계획 목록으로 이동하시겠습니까?")) {
+    if (confirm("장소가 추가되었습니다. 계획으로 이동하시겠습니까?")) {
+      const val = selectedTrip.value.id;
       closeModal();
-      router.push({name: "profile", params: {id: loginStore.getId}});
+      router.push({name: "place", params: {id: val}});
     }
     closeModal(); // 장소 추가 후 모달 닫기
   } catch (error) {

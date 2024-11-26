@@ -161,7 +161,7 @@ const result_msg = ref("카테고리를 선택하면 주변 정보가 보여집�
 // let latitude = 37.554678, longitude = 126.970606;
 let latitude = 36.354946759143, longitude = 127.29980994578;
 
-onMounted(() => {
+onMounted(async () => {
   // 현재 위치를 지도 첫 시작점으로 잡기
   navigator.geolocation.getCurrentPosition((cur) => {
     latitude = cur.coords.latitude;
@@ -196,9 +196,8 @@ onMounted(() => {
       });
 
       markers.push(marker);
-      ;
+
       // 현재 위치로 지역 정보 표시하기
-      if (!(kakao.maps && kakao.maps.services)) return;
       let geocoder = new kakao.maps.services.Geocoder();
       geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function (result, status) {
         if (status === kakao.maps.services.Status.OK) {
@@ -219,11 +218,7 @@ onMounted(() => {
     console.error("카카오맵 API 로딩 실패");
   };
   document.head.appendChild(script);
-  getWeather();
-});
-
-const getWeather = async () => {
-  // 현재 위치의 날씨 표시하기
+  
   try {
     let today = new Date();
     let date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate();
@@ -254,7 +249,7 @@ const getWeather = async () => {
   } catch (error) {
     console.error("Weather API 호출 실패", error);
   }
-}
+});
 
 // 키워드로 장소 api 요청 부분
 const search = (keyword) => {
