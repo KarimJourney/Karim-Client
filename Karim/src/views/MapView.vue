@@ -157,8 +157,9 @@ const address = ref("검색해보세요");
 const result_msg = ref("카테고리를 선택하면 주변 정보가 보여집니다.");
 
 onMounted(async () => {
-  // 기본 위치는 서울역
-  let latitude = 37.554678, longitude = 126.970606;
+  // 기본 위치는 서울역 아니고 유성연수원
+  // let latitude = 37.554678, longitude = 126.970606;
+  let latitude = 36.354946759143, longitude = 127.29980994578;
 
   // 현재 위치를 지도 첫 시작점으로 잡기
   navigator.geolocation.getCurrentPosition((cur) => {

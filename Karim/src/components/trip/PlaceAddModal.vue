@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useLoginStore } from "@/stores/login";
 import axios from "@/utils/axios";
 import { defineComponent } from 'vue';
@@ -22,7 +23,7 @@ const loginStore = useLoginStore();
 const selectedTrip = ref(""); // 기본값을 빈 문자열로 설정
 const selectedDate = ref("");
 const trips = ref({});
-
+const router = useRouter();
 
 onMounted(async () => {
   console.log(props.place);
@@ -50,6 +51,10 @@ const addPlace = async () => {
     };
     console.log(data.attrId);
     await axios.post(`/plan/detail/${selectedTrip.value.id}`, data);
+    if (confirm("장소가 추가되었습니다. 계획 목록으로 이동하시겠습니까?")) {
+      closeModal();
+      router.push({name: "profile", params: {id: loginStore.getId}});
+    }
     closeModal(); // 장소 추가 후 모달 닫기
   } catch (error) {
     console.error("장소 추가 중 오류 발생", error);

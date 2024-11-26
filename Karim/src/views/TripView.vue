@@ -295,6 +295,7 @@ const moveMap = (date, index) => {
           <h5 class="content"><span v-if="plan.cost">\{{ plan.cost.toLocaleString() }}</span><br>{{ plan.content }}</h5>
         </div>
         <div id="edit">
+          <span v-show="!isEditing" @click="router.push({ name: 'map' })">장소 찾기</span>
           <span v-show="!isEditing" @click="isEditing = true">수정</span>
           <span v-show="isEditing" @click="updatePlace">완료</span>
         </div>
@@ -341,9 +342,7 @@ const moveMap = (date, index) => {
             </template>
           </div>
         </template>
-        <template v-else>
-          <button @click="router.push({ name: 'map' })" class="button-find-place">장소 찾기</button>
-        </template>
+        
       </div>
     </aside>
     <div class="map-wrapper">
@@ -420,6 +419,10 @@ aside {
   text-align: right;
   cursor: pointer;
   font-size: 0.8em;
+}
+
+#edit span {
+  margin-left: 10px;
 }
 
 .items {
@@ -543,11 +546,6 @@ aside {
 .place-item .input-cost:focus {
   border-color: var(--navy);
   outline: none;
-}
-
-.button-find-place {
-  background-color: var(--navy);
-  color: var(--white);
 }
 
 /* 버튼 스타일 */

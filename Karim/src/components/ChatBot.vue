@@ -87,8 +87,10 @@ export default {
         },
       ],
       isLoading: false, // 로딩 상태 추가
-      latitude: 37.554678, // 기본 위치 서울역
-      longitude: 126.970606,
+      // latitude: 37.554678, // 기본 위치 서울역
+      // longitude: 126.970606,
+      latitude: 36.354946759143, // 아니고 유성연수원
+      longitude: 127.29980994578,
     };
   },
   methods: {
