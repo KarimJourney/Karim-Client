@@ -38,7 +38,7 @@ onMounted(async () => {
       return acc;
     }, {});
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&autoload=false`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&libraries=services&autoload=false`;
     script.onload = () => {
       kakao.maps.load(() => {
         const container = document.getElementById("map");
@@ -513,7 +513,7 @@ aside {
   margin-bottom: 5px;
 }
 
-.place-item h5 {
+.place-index h5 {
   font-size: 0.6em;
   color: var(--white);
 }
@@ -529,7 +529,7 @@ aside {
 
 .place-item .icon {
   position: absolute;
-  top: 25.5%;
+  top: 24%;
   left: 3%;
 }
 

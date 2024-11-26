@@ -170,7 +170,7 @@ onMounted(() => {
 
   // 카카오맵 로딩
   const script = document.createElement("script");
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&libraries=services&autoload=false&v=1`;
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${app_key}&libraries=services&autoload=false&v=${new Date().getTime()}`;
   script.onload = () => {
     kakao.maps.load(() => {
       const container = document.getElementById("map"); // 맵을 표시할 div
@@ -196,7 +196,8 @@ onMounted(() => {
       });
 
       markers.push(marker);
-
+      
+      console.log(kakao.maps.services);
       // 현재 위치로 지역 정보 표시하기
       if (!(kakao.maps && kakao.maps.services)) return;
       let geocoder = new kakao.maps.services.Geocoder();
