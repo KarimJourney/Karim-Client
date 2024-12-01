@@ -64,12 +64,6 @@ API.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
-    // LoginStore의 상태를 갱신하여 로그인 상태를 'false'로 변경
-    const loginStore = useLoginStore(); // store 인스턴스를 가져옴
-    loginStore.setLogin(false, "", "", "", "", "");
-
-    await router.push({ name: "home" });
     return Promise.reject(error);
   }
 );

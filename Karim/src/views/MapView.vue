@@ -221,7 +221,7 @@ onMounted(async () => {
   
   try {
     let today = new Date();
-    let date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate();
+    let date = "" + today.getFullYear() + (today.getMonth + 1 < 10 ? "0" : "") + (today.getMonth() + 1) + (today.getDate() < 10 ? "0" : "") + today.getDate();
     let time = (today.getHours() - (today.getMinutes() < 10 ? 1 : 0) < 0 ? 23 : today.getHours() - (today.getMinutes() < 10 ? 1 : 0));
     if (time < 10) time = "0" + time;
     time += "00";
